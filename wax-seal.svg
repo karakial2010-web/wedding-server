@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>3D digital wax seal stamp, rose gold, embossed letter S with botanical leaves</title>
+  <defs>
+    <linearGradient id="metalFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#FCE6D0"/>
+      <stop offset="0.16" stop-color="#F2C9A3"/>
+      <stop offset="0.4"  stop-color="#DFA175"/>
+      <stop offset="0.58" stop-color="#C67F50"/>
+      <stop offset="0.76" stop-color="#A75F36"/>
+      <stop offset="0.9"  stop-color="#8A4320"/>
+      <stop offset="1"    stop-color="#6B2E12"/>
+    </linearGradient>
+
+    <radialGradient id="sheen" cx="0.36" cy="0.28" r="0.85">
+      <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="0.3"  stop-color="#FFEEDB" stop-opacity="0.1"/>
+      <stop offset="0.62" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="0.85" stop-color="#2E1206" stop-opacity="0.1"/>
+      <stop offset="1"    stop-color="#3A1606" stop-opacity="0.28"/>
+    </radialGradient>
+
+    <linearGradient id="letterBright" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#FFF3DF"/>
+      <stop offset="0.5"  stop-color="#E2A97B"/>
+      <stop offset="1"    stop-color="#9C5428"/>
+    </linearGradient>
+
+    <linearGradient id="leafFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#F8D7B5"/>
+      <stop offset="0.5"  stop-color="#C9824F"/>
+      <stop offset="1"    stop-color="#753516"/>
+    </linearGradient>
+
+    <linearGradient id="beadFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#FBE0C0"/>
+      <stop offset="1"    stop-color="#93471F"/>
+    </linearGradient>
+
+    <linearGradient id="topGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- وجه شمعي عضوي = ختم بارز -->
+    <filter id="sealEdge" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="2" seed="5" result="disp"/>
+      <feDisplacementMap in="SourceGraphic" in2="disp" scale="17" xChannelSelector="R" yChannelSelector="G" result="warped"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="12" result="grainT"/>
+      <feColorMatrix in="grainT" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.085 0" result="grainA"/>
+      <feComposite operator="in" in="grainA" in2="warped" result="grainClip"/>
+      <feBlend mode="multiply" in="grainClip" in2="warped"/>
+    </filter>
+
+    <filter id="softBlur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <filter id="microBlur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+
+    <!-- ورقة (تتشعب من الطرف الأيسر لليمين) -->
+    <g id="leaf">
+      <path d="M0 0 Q42 -58 86 0 Q42 58 0 0 Z" fill="url(#leafFace)" stroke="#6B2A0E" stroke-width="3"/>
+      <path d="M3 0 Q45 -9 83 0" fill="none" stroke="#FFE9CD" stroke-width="2.5" opacity=".85"/>
+      <path d="M3 0 Q45 32 83 0" fill="none" stroke="#54200A" stroke-width="2" opacity=".5"/>
+    </g>
+  </defs>
+
+  <!-- خلفية خضراء صلبة للعزل / الاستخلاص -->
+  <rect width="1024" height="1024" fill="#00A64E"/>
+
+  <!-- ظل سفلي ناعم -->
+  <ellipse cx="512" cy="636" rx="362" ry="318" fill="#04200E" opacity="0.5" filter="url(#softBlur)"/>
+
+  <!-- جسم الختم -->
+  <g filter="url(#sealEdge)">
+    <circle cx="512" cy="512" r="330" fill="url(#metalFace)"/>
+    <circle cx="512" cy="512" r="318" fill="none" stroke="#8A4520" stroke-width="10" opacity="0.55"/>
+    <circle cx="512" cy="512" r="330" fill="url(#sheen)"/>
+
+    <!-- حافة داخلية محفورة -->
+    <circle cx="512" cy="512" r="258" fill="none" stroke="#6E2D11" stroke-width="14"/>
+    <circle cx="512" cy="512" r="258" fill="none" stroke="#F6CFA9" stroke-width="5"/>
+
+    <!-- خرز زخرفي -->
+    <circle cx="512" cy="512" r="288" fill="none" stroke="url(#beadFace)" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 30"/>
+
+    <!-- لمعان علوي -->
+    <path d="M 300 226 A 330 330 0 0 1 724 226" fill="none" stroke="url(#topGlow)" stroke-width="40" filter="url(#microBlur)" opacity="0.5"/>
+  </g>
+
+  <!-- أغصان نباتية (غار) على الجانبين -->
+  <g>
+    <!-- يسار -->
+    <use href="#leaf" transform="translate(214 728) rotate(-64)"/>
+    <use href="#leaf" transform="translate(252 706) rotate(-36)"/>
+    <use href="#leaf" transform="translate(290 660) rotate(-10)"/>
+    <!-- يمين -->
+    <use href="#leaf" transform="translate(810 728) rotate(64) scale(-1,1)"/>
+    <use href="#leaf" transform="translate(772 706) rotate(36) scale(-1,1)"/>
+    <use href="#leaf" transform="translate(734 660) rotate(10) scale(-1,1)"/>
+
+    <!-- الحرف S محفور بارز -->
+    <g transform="rotate(-4 512 512)"
+       font-family="'Playfair Display','Georgia','Times New Roman',serif"
+       font-weight="700" font-size="252"
+       text-anchor="middle" dominant-baseline="central">
+      <text x="512" y="514" fill="#4A1C07" transform="translate(9 13)" opacity="0.92">S</text>
+      <text x="512" y="514" fill="#FFF2DC" transform="translate(-8 -9)">S</text>
+      <text x="512" y="514" fill="url(#letterBright)">S</text>
+    </g>
+  </g>
+</svg>
