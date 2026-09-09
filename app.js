@@ -1,10 +1,7 @@
-// ---------- إعدادات الدخول ----------
-const PANEL_USER = 'hza';
-const PANEL_PASS_HASH = '4b7dcde45fac24a6dd67f0fca895984643890d29852b6946b434d07e0a0de5a0';
-const SETTINGS_KEY = 'wedding_site_settings';
-const SESSION_KEY = 'wedding_panel_session';
+// ---------- أدوات ----------
+const $ = (id) => document.getElementById(id);
 
-// ---------- القيم الافتراضية ----------
+// ---------- القيم الافتراضية (نسخة احتياطية بالمتصفح فقط في حال فشل الاتصال) ----------
 const DEFAULT_SETTINGS = {
     groom: 'آدم',
     bride: 'لارا',
@@ -19,15 +16,13 @@ const DEFAULT_SETTINGS = {
     venueMap: 'https://maps.google.com/?q=Jeddah',
     video: 'wedding-intro.mp4',
     rsvpHint: 'نتشرف بردّكم قبل 10 سبتمبر',
+    template: 'luxury',
     program: [
         { time: '7:00 مساءً', title: 'استقبال الضيوف', desc: 'باب الضيافة مفتوح وطابور الاستقبال ينتظركم' },
         { time: '7:30 مساءً', title: 'مراسم العقد', desc: 'لحظة توقيع عقد الزواج بمشاركة العائلتين' },
         { time: '9:00 مساءً', title: 'مأدبة العشاء', desc: 'مأدبة عشاء فاخرة على أنغام الموسيقى' }
     ]
 };
-
-// ---------- أدوات ----------
-const $ = (id) => document.getElementById(id);
 
 function toast(msg) {
     const t = $('toast');
@@ -37,19 +32,40 @@ function toast(msg) {
     t._timer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-function loadSettings() {
+// ---------- الاتصال بالسيرفر ----------
+async function loadSettings() {
     try {
-        const raw = localStorage.getItem(SETTINGS_KEY);
-        if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
-        const parsed = JSON.parse(raw);
-        return Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), parsed);
+        const res = await fetch('/api/settings');
+        if (!res.ok) throw new Error('failed');
+        const data = await res.json();
+        return Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), data);
     } catch (e) {
         return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
     }
 }
 
-function saveSettings(s) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+async function saveSettings(s) {
+    try {
+        const res = await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(s)
+        });
+        return res.ok;
+    } catch (e) {
+        return false;
+    }
+}
+
+async function checkSession() {
+    try {
+        const res = await fetch('/api/session', { credentials: 'include' });
+        const data = await res.json();
+        return !!data.authenticated;
+    } catch (e) {
+        return false;
+    }
 }
 
 function initials(a, b) {
@@ -58,11 +74,6 @@ function initials(a, b) {
 }
 
 // ---------- تسجيل الدخول ----------
-async function hashPass(p) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p));
-    return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
-}
-
 $('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const user = $('loginUser').value.trim();
@@ -72,14 +83,21 @@ $('loginForm').addEventListener('submit', async (e) => {
     loginBtn.disabled = true;
     loginBtn.textContent = '...جاري التحقق';
     try {
-        const ok = user === PANEL_USER && (await hashPass(pass)) === PANEL_PASS_HASH;
-        if (ok) {
-            sessionStorage.setItem(SESSION_KEY, '1');
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ user, pass })
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
             showDash();
             toast('أهلاً بك في لوحة التحكم');
         } else {
-            $('loginErr').textContent = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+            $('loginErr').textContent = data.error || 'اسم المستخدم أو كلمة المرور غير صحيحة';
         }
+    } catch (e) {
+        $('loginErr').textContent = 'تعذر الاتصال بالسيرفر';
     } finally {
         loginBtn.disabled = false;
         loginBtn.textContent = 'دخول';
@@ -92,8 +110,8 @@ function showDash() {
     loadForm();
 }
 
-$('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem(SESSION_KEY);
+$('logoutBtn').addEventListener('click', async () => {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
     $('dashView').classList.remove('active');
     $('loginView').classList.remove('hidden');
     $('loginPass').value = '';
@@ -113,8 +131,8 @@ function esc(v) {
     return String(v).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function loadForm() {
-    const s = loadSettings();
+async function loadForm() {
+    const s = await loadSettings();
     $('fGroom').value = s.groom;
     $('fBride').value = s.bride;
     $('fFamilies').value = s.families;
@@ -152,13 +170,14 @@ $('progRows').addEventListener('click', (e) => {
 });
 
 // ---------- جمع القيم ----------
-function collect() {
+async function collect() {
     const rows = Array.from($('progRows').querySelectorAll('.prog-row')).map((r) => ({
         time: r.querySelector('.p-time').value.trim(),
         title: r.querySelector('.p-title').value.trim(),
         desc: r.querySelector('.p-desc').value.trim()
     }));
-    const s = Object.assign(loadSettings(), {
+    const current = await loadSettings();
+    const s = Object.assign(current, {
         groom: $('fGroom').value.trim(),
         bride: $('fBride').value.trim(),
         families: $('fFamilies').value.trim(),
@@ -178,22 +197,22 @@ function collect() {
     return s;
 }
 
-$('saveBtn').addEventListener('click', () => {
-    const s = collect();
-    saveSettings(s);
-    toast('تم حفظ الإعدادات — افتح الدعوة لمشاهدتها');
+$('saveBtn').addEventListener('click', async () => {
+    const s = await collect();
+    const ok = await saveSettings(s);
+    toast(ok ? 'تم حفظ الإعدادات — افتح الدعوة لمشاهدتها' : 'حدث خطأ أثناء الحفظ، حاول مرة أخرى');
 });
 
-$('resetBtn').addEventListener('click', () => {
+$('resetBtn').addEventListener('click', async () => {
     if (!confirm('إعادة ضبط كل الإعدادات على الافتراضي؟')) return;
-    localStorage.removeItem(SETTINGS_KEY);
-    loadForm();
+    await fetch('/api/settings/reset', { method: 'POST', credentials: 'include' });
+    await loadForm();
     toast('تمت إعادة التعيين');
 });
 
 // ---------- تصدير / استيراد ----------
-$('exportBtn').addEventListener('click', () => {
-    const s = collect();
+$('exportBtn').addEventListener('click', async () => {
+    const s = await collect();
     const blob = new Blob([JSON.stringify(s, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -209,12 +228,12 @@ $('importFile').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
         try {
             const s = JSON.parse(reader.result);
             const merged = Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), s);
-            saveSettings(merged);
-            loadForm();
+            await saveSettings(merged);
+            await loadForm();
             toast('تم استيراد النسخة');
         } catch (err) {
             toast('ملف غير صالح');
@@ -225,14 +244,15 @@ $('importFile').addEventListener('change', (e) => {
 });
 
 // ---------- معاينة ----------
-$('previewBtn').addEventListener('click', () => {
-    const s = collect();
-    saveSettings(s);
+$('previewBtn').addEventListener('click', async () => {
+    const s = await collect();
+    await saveSettings(s);
     const tpl = s.template || 'luxury';
     window.open('../' + tpl + '/index.html', '_blank');
 });
 
 // ---------- بدء التشغيل ----------
-(function init() {
-    if (sessionStorage.getItem(SESSION_KEY) === '1') showDash();
+(async function init() {
+    const authed = await checkSession();
+    if (authed) showDash();
 })();
