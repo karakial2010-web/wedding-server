@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-title="b_title">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5DCD8">
+    <title>المنشئ | اصنع دعوتك</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Playfair+Display:wght@500;700&family=El+Messiri:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="assets/i18n.js"></script>
+    <script src="assets/theme.js"></script>
+</head>
+<body class="builder-page">
+
+    <nav class="site-nav scrolled">
+        <a href="../index.html" class="logo" style="--role-gold:#A9824A;">Invite Studio</a>
+        <div class="nav-links">
+            <a href="../index.html" data-i18n="b_nav_home">الرئيسية</a>
+            <a href="../index.html#demos" data-i18n="b_nav_tpl">التصاميم</a>
+            <a href="#" id="openToolbar" data-i18n="b_nav_gallery">🖼️ معرض الصور</a>
+            <a href="preview.html" class="nav-cta" id="previewTopBtn" data-i18n="b_nav_pv">معاينة كاملة</a>
+            <button class="lang-toggle" id="langBtn" aria-label="Language"></button>
+        </div>
+        <button class="hamburger" id="hamburger">☰</button>
+    </nav>
+
+    <!-- معرض الصور (اختياري في الملف التحضيري) -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-menu" id="closeMenu">✕</button>
+        <a href="../index.html" data-i18n="b_nav_home">الرئيسية</a>
+        <a href="../index.html#demos" data-i18n="b_nav_tpl">التصاميم</a>
+        <button class="lang-toggle" id="langBtnM" style="justify-content:center;width:100%;"></button>
+    </div>
+
+    <div class="builder-shell">
+
+        <!-- ===== يسار: النماذج ===== -->
+        <div class="builder-panel">
+            <div class="step-indicator">
+                <div class="step-chip active" data-step="0" data-i18n="b_st0">1 · التصميم</div>
+                <div class="step-chip" data-step="1" data-i18n="b_st_mu">2 · المناسبة والموسيقى</div>
+                <div class="step-chip" data-step="2" data-i18n="b_st1">3 · الأساسيات</div>
+                <div class="step-chip" data-step="3" data-i18n="b_st2">4 · القصة</div>
+                <div class="step-chip" data-step="4" data-i18n="b_st3">5 · البرنامج</div>
+                <div class="step-chip" data-step="5" data-i18n="b_st4">6 · الصور</div>
+                <div class="step-chip" data-step="6" data-i18n="b_st5">7 · الخاتمة</div>
+            </div>
+
+            <!-- Step 0: التصميم -->
+            <div class="builder-card active" data-card="0">
+                <h2 data-i18n="b0_t">اختر الطابع</h2>
+                <p data-i18n="b0_s">الطابع يتحكم في ألوان دعوتك بالكامل.</p>
+                <div class="template-picker">
+                    <div class="tpl-option selected" data-tpl="classic">
+                        <div class="tpl-swatch" style="background:linear-gradient(160deg,#F5DCD8,#FDF3EF)"></div>
+                        <span data-i18n="b0_classic">الكلاسيكي ♥</span>
+                    </div>
+                    <div class="tpl-option" data-tpl="rose">
+                        <div class="tpl-swatch" style="background:linear-gradient(160deg,#EDD8EA,#F9F0F7)"></div>
+                        <span data-i18n="b0_rose">الرومانسي</span>
+                    </div>
+                    <div class="tpl-option" data-tpl="modern">
+                        <div class="tpl-swatch" style="background:linear-gradient(160deg,#DDE9E2,#F3F8F5)"></div>
+                        <span data-i18n="b0_modern">العصري</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 1: المناسبة والموسيقى -->
+            <div class="builder-card" data-card="1">
+                <h2 data-i18n="mus_title">المناسبة والموسيقى</h2>
+                <p data-i18n="mus_sub">اختر نوع المناسبة وفئة موسيقية تناسب أجواءها، أو ارفع مقطعاً مخصصاً.</p>
+                <div class="field"><label data-i18n="b1_occ">نوع المناسبة</label>
+                    <select id="fOccasion"></select>
+                </div>
+                <div class="field"><label data-i18n="b1_occname">✍️ اكتب اسم المناسبة</label><input type="text" id="fOccasionName" placeholder="زفاف أحمد وسارة"></div>
+                <div class="field"><label data-i18n="b1_phone">⭐ رقم هاتفك (مطلوب للتواصل معك)</label><input type="tel" id="fPhone" placeholder="05xxxxxxxx" required></div>
+                <div class="field env-toggle">
+                    <label class="env-toggle-label" for="fEnv">💌 <span data-i18n="env_opt">المظروف بختم الشمع عند فتح الدعوة</span></label>
+                    <label class="switch"><input type="checkbox" id="fEnv" checked><span class="slider"></span></label>
+                </div>
+                <div class="field">
+                    <label>🎵 <span data-i18n="mus_t">فئة الموسيقى (تُشغَّل تلقائياً للضيوف)</span></label>
+                    <div class="music-picker" id="musicPicker"></div>
+                </div>
+                <div class="field">
+                    <label data-i18n="mus_custom">رفع مقطع صوتي مخصص (اختياري، يحل محل الفئة)</label>
+                    <input type="file" id="musicInput" accept="audio/*">
+                </div>
+                <div class="music-preview" id="musicPreviewBox" style="display:none;">
+                    <audio id="musicPreview" controls preload="metadata"></audio>
+                    <button class="rep-add" type="button" id="musicClear" data-i18n="mus_clear">✕ إزالة المقطع</button>
+                </div>
+                <p class="note-text" data-i18n="mus_note">تظهر فئة الموسيقى للضيوف كزر تشغيل في الدعوة. المقطع المخصص يُشغَّل تلقائياً عند فتح الدعوة من الضيف.</p>
+            </div>
+
+            <!-- Step 2: الأساسيات -->
+            <div class="builder-card" data-card="2">
+                <h2 data-i18n="b1_t">تفاصيل المناسبة</h2>
+                <p data-i18n="b1_s">أدخل أسماء العروسين وأهم التفاصيل.</p>
+                <div class="field-row">
+                    <div class="field"><label data-i18n="b1_groom">اسم العريس / صاحب المناسبة</label><input type="text" id="fGroom" placeholder="آدم" value="آدم"></div>
+                    <div class="field"><label data-i18n="b1_bride">اسم العروس / صاحبة المناسبة</label><input type="text" id="fBride" placeholder="لارا" value="لارا"></div>
+                </div>
+                <div class="field"><label data-i18n="b1_callig">سطر إنجليزي أنيق (اختياري)</label><input type="text" id="fCalligraphy" placeholder="L & A" value="L & A"></div>
+                <div class="field"><label data-i18n="b1_wel">نص الترحيب</label><input type="text" id="fWelcome" placeholder="يسعدنا دعوتكم لمشاركتنا فرحة زواجنا" value="يسعدنا دعوتكم لمشاركتنا فرحة زواجنا"></div>
+                <div class="field-row">
+                    <div class="field"><label data-i18n="b1_date">تاريخ المناسبة</label><input type="date" id="fDate" value="2026-09-24"></div>
+                    <div class="field"><label data-i18n="b1_time">الوقت</label><input type="time" id="fTime" value="19:00"></div>
+                </div>
+                <div class="field"><label data-i18n="b1_rsvpdl">آخر موعد لتأكيد الحضور (اختياري)</label><input type="date" id="fRsvpDeadline" value="2026-09-10"></div>
+                <div class="field"><label data-i18n="b1_venue">اسم المكان / القاعة</label><input type="text" id="fVenue" placeholder="قاعة الياسمين" value="قاعة الياسمين"></div>
+                <div class="field"><label data-i18n="b1_addr">العنوان التفصيلي</label><input type="text" id="fAddress" placeholder="طريق الأمير سلطان، جدة" value="طريق الأمير سلطان، جدة"></div>
+                <div class="field"><label data-i18n="b1_map">📍 موقع المكان في خرائط جوجل</label><input type="text" id="fMapQuery" placeholder="مثال: قاعة الياسمين جدة شارع التحلية" value="فندق روزوود جدة"></div>
+                <div class="field">
+                    <label data-i18n="b1_mappv">معاينة الخريطة</label>
+                    <iframe id="mapPreview" class="map-preview" src="https://maps.google.com/maps?q=Jeddah&z=13&output=embed&hl=ar" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+
+            <!-- Step 3: القصة -->
+            <div class="builder-card" data-card="3">
+                <h2 data-i18n="b2_t">قصتكما</h2>
+                <p data-i18n="b2_s">أضف ما تشاء من محطات حكايتكما (اختياري).</p>
+                <div class="story-repeater" id="storyRepeater"></div>
+                <button class="rep-add" type="button" id="addStory" data-i18n="b2_add">+ إضافة محطة</button>
+            </div>
+
+            <!-- Step 4: البرنامج -->
+            <div class="builder-card" data-card="4">
+                <h2 data-i18n="b3_t">برنامج الحفل</h2>
+                <p data-i18n="b3_s">حدد سير المناسبة خطوة بخطوة.</p>
+                <div class="program-repeater" id="programRepeater"></div>
+                <button class="rep-add" type="button" id="addProgram" data-i18n="b3_add">+ إضافة فقرة</button>
+            </div>
+
+            <!-- Step 5: الصور -->
+            <div class="builder-card" data-card="5">
+                <h2 data-i18n="b4_t">صور المناسبة</h2>
+                <p data-i18n="b4_s">أضف صوراً للعروسين أو لحظات مميزة لتظهر للضيوف في معرض الصور (حتى 9 صور). الرجاء اختيار صورة رئيسية مميزة.</p>
+                <label class="photo-drop" for="photoInput">
+                    <div class="pd-icon">📷</div>
+                    <div><b data-i18n="b4_drop">اضغط أو اسحب الصور هنا</b><br><span class="note-text" data-i18n="b4_notes">يُسمح بصيغ JPG / PNG / WebP</span></div>
+                </label>
+                <input type="file" id="photoInput" accept="image/*" multiple hidden>
+                <div class="photo-grid" id="photoGrid"></div>
+                <p class="note-text mt-16" id="photoNotice"></p>
+            </div>
+
+            <!-- Step 6: الخاتمة -->
+            <div class="builder-card" data-card="6">
+                <h2 data-i18n="b5_t">اللمسات الأخيرة</h2>
+                <p data-i18n="b5_s">أكّد التفاصيل ثم شاهد دعوتك كاملة.</p>
+                <div class="field"><label data-i18n="b5_closer">رسالة ختامية</label><textarea id="fCloser" rows="3">قرأتما وشاهدتما كل شيء... انتظرونا في الموعد المحدد لنحتفل معاً ❤</textarea></div>
+                <div class="field"><label data-i18n="b5_foot">الأسماء الرسمية للتذييل</label><input type="text" id="fFooterNames" placeholder="لارا & آدم" value="لارا & آدم"></div>
+                <div class="field"><label data-i18n="b5_wa">رابط واتساب لتأكيد أسرع (اختياري)</label><input type="text" id="fWhatsapp" placeholder="https://wa.me/9665xxxxxxxxx"></div>
+                <div class="publish-box">
+                    <h3 data-i18n="pub_t">🏁 إنهاء وإرسال</h3>
+                    <p class="note-text" data-i18n="pub_s">اضغط زر الإنهاء لنشر دعوتك ورفع الصور — تُرسل معلوماتك (الاسم، الهاتف، تفاصيل الدعوة) مباشرة إلى فريق المنصة عبر تيليجرام.</p>
+                    <button class="btn btn-primary" type="button" id="publishBtn" style="width:100%;" data-i18n="pub_btn">🏁 إنهاء — إرسال دعوتي</button>
+                    <div class="publish-result" id="publishResult"></div>
+                </div>
+            </div>
+
+            <div class="builder-nav">
+                <button class="btn btn-secondary" id="prevBtn" style="visibility:hidden;" data-i18n="b_prev">السابق</button>
+                <button class="btn btn-primary" id="nextBtn" data-i18n="b_next">التالي ←</button>
+            </div>
+            <p class="note-text mt-16" data-i18n="b_note">💾 يتم حفظ التعديلات تلقائياً، وتظهر المعاينة الحية أمامك في الهاتف.</p>
+        </div>
+
+        <!-- ===== يمين: المعاينة الحية ===== -->
+        <div class="preview-column">
+            <div class="preview-phone">
+                <div class="bp-notch"></div>
+                <div class="bp-screen" id="bpScreen">
+                    <video class="bp-video-intro" id="bpIntroVideo" autoplay muted loop playsinline preload="auto"></video>
+                    <div class="bp-video-overlay"></div>
+                    <div class="bp-content">
+                        <div class="bp-section bp-hero">
+                            <small id="bpOccasion">دعوة زفاف</small>
+                            <div class="bp-divider">❀</div>
+                            <div class="bp-couple" id="bpCalligraphy">L & A</div>
+                            <div class="bp-ar" id="bpNames">آدم & لارا</div>
+                            <div class="bp-date" id="bpDate"></div>
+                            <div class="bp-divider">❀</div>
+                            <small id="bpWelcome">يسعدنا دعوتكم لمشاركتنا فرحة زواجنا</small>
+                        </div>
+                        <div class="bp-section bp-countdown">
+                            <small data-i18n="pv_count_kick">باقي على الفرحة</small>
+                            <div class="bp-timer" id="bpTimer"></div>
+                        </div>
+                        <div class="bp-section bp-venue">
+                            <small data-i18n="pv_venue_kick">موعدنا</small>
+                            <div class="bp-divider">❀</div>
+                            <h3 id="bpVenue">قاعة الياسمين</h3>
+                            <p id="bpAddress">طريق الأمير سلطان، جدة</p>
+                        </div>
+                        <div class="bp-section bp-gallery">
+                            <small data-i18n="pv_gal_kick">معرض الصور</small>
+                            <div class="bp-divider">❀</div>
+                            <div id="bpGallery" class="bp-gallery-grid"></div>
+                        </div>
+                        <div class="bp-section bp-rsvp">
+                            <small data-i18n="pv_rsvp_t">تأكيد الحضور</small>
+                            <div class="bp-divider">❀</div>
+                            <input type="text" placeholder="اسمك الكريم" style="width:100%;padding:9px;border:1px solid rgba(194,154,91,0.4);border-radius:8px;text-align:center;" data-i18n-ph="pv_name_ph">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="fullPreviewBtn" style="width:100%;" data-i18n="b_nav_pv">🔍 معاينة كاملة</button>
+        </div>
+    </div>
+
+    <a class="wa-fab" href="https://wa.me/963951742592" target="_blank" rel="noopener" aria-label="WhatsApp support" data-i18n-title="wa_tooltip">
+        <svg viewBox="0 0 32 32"><path d="M16.04 3C9.5 3 4.16 8.34 4.16 14.87c0 2.09.55 4.13 1.59 5.93L4 26l5.36-1.4a11.85 11.85 0 0 0 6.68 2.07c6.54 0 11.87-5.33 11.87-11.86C28.1 8.34 22.58 3 16.04 3zm0 21.7c-1.87 0-3.7-.5-5.27-1.44l-.38-.22-3.1.81.83-3.03-.25-.4a9.84 9.84 0 0 1-1.51-5.25c0-5.43 4.42-9.85 9.85-9.85 5.43 0 9.84 4.42 9.84 9.85 0 5.43-4.41 9.53-9.84 9.53zm5.4-7.36c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.88-.78-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.34.45-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.11 3.22 5.1 4.52.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+    </a>
+
+    <script src="assets/builder.js"></script>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#5E5652">
+    <title>SealScript™ | لغة برمجة الظرف الفاخر (مطابقة لفتح الظرف تماماً)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=El+Messiri:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --taupe: #6B6360;
+            --taupe-dark: #4A4340;
+            --taupe-light: #807672;
+            --gold: #D4AF37;
+            --gold-dark: #9A782B;
+            --gold-light: #F5E3A2;
+            --text: #3E3835;
+            --text-soft: #8A7F7B;
+            --shadow: 0 35px 80px rgba(30, 25, 20, 0.4);
+            --code-bg: #1A1817;
+            --code-text: #F8F6F0;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: #EAE6DE;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Nav */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 18px 5vw; background: rgba(234, 230, 222, 0.95);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .brand { font-family: 'Pinyon Script', cursive; font-size: 32px; color: var(--gold-dark); text-decoration: none; }
+        .nav-links { display: flex; gap: 24px; align-items: center; }
+        .nav-links a { color: var(--text); text-decoration: none; font-size: 14px; font-weight: 500; transition: color .3s; }
+        .nav-links a:hover { color: var(--gold-dark); }
+        .nav-cta {
+            background: var(--taupe); color: #fff !important; padding: 10px 22px;
+            border-radius: 30px; font-weight: 600; text-decoration: none; transition: background .3s;
+        }
+        .nav-cta:hover { background: var(--taupe-dark); }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px; margin: 0 auto; padding: 120px 4vw 60px;
+        }
+        .header-section {
+            text-align: center; margin-bottom: 40px;
+        }
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold);
+            color: var(--gold-dark); padding: 6px 18px; border-radius: 20px;
+            font-size: 13px; font-weight: 600; margin-bottom: 16px;
+        }
+        h1 {
+            font-family: 'Cormorant Garamond', 'El Messiri', serif;
+            font-size: clamp(36px, 5vw, 54px);
+            color: var(--taupe-dark);
+            margin-bottom: 12px;
+        }
+        h1 span { color: var(--gold-dark); font-family: 'Pinyon Script', cursive; font-size: 1.2em; }
+        p.subtitle {
+            font-size: 17px; color: var(--text-soft); max-width: 700px; margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* IDE Studio Grid */
+        .ide-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: stretch;
+        }
+        @media (max-width: 1024px) {
+            .ide-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Editor Pane */
+        .editor-card {
+            background: var(--code-bg); border-radius: 16px;
+            box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .editor-header {
+            background: #12100F; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .window-dots { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #FF5F56; }
+        .dot-yellow { background: #FFBD2E; }
+        .dot-green { background: #27C93F; }
+        .editor-title { color: #A09590; font-family: 'Fira Code', monospace; font-size: 13px; }
+        .presets { display: flex; gap: 8px; }
+        .preset-btn {
+            background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4);
+            color: var(--gold); padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;
+            transition: all .2s; font-family: inherit;
+        }
+        .preset-btn:hover { background: var(--gold); color: #1A1817; }
+
+        .editor-body {
+            padding: 20px; flex-grow: 1; font-family: 'Fira Code', monospace; font-size: 14px;
+            line-height: 1.7; color: var(--code-text); background: transparent;
+            border: none; outline: none; resize: none; width: 100%; min-height: 380px;
+        }
+
+        .editor-footer {
+            background: #12100F; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .compile-status { color: #27C93F; font-size: 13px; font-family: 'Fira Code', monospace; display: flex; align-items: center; gap: 6px; }
+        .run-btn {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #1A1817; border: none; padding: 10px 24px; border-radius: 8px;
+            font-weight: 700; font-size: 14px; cursor: pointer; transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+        .run-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4); }
+
+        /* Preview Pane - 3D Elevated Marble Podium & Opened Envelope Match */
+        .preview-card {
+            background: #DFD9CE; border-radius: 16px;
+            box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column;
+            position: relative; border: 2px solid rgba(212, 175, 55, 0.6);
+            min-height: 600px;
+        }
+
+        .room-bg {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, #EAE5DC 0%, #D5CEBE 100%);
+            overflow: hidden;
+        }
+        /* Background vertical wall/pillars matching photo */
+        .wall-pillars {
+            position: absolute; inset: 0; opacity: 0.25;
+            background: repeating-linear-gradient(90deg, transparent, transparent 150px, rgba(212,175,55,0.15) 150px, rgba(212,175,55,0.15) 155px);
+        }
+
+        /* 3D Elevated Marble Podium Block */
+        .marble-podium {
+            position: absolute; bottom: 0; left: 10%; right: 10%; height: 260px;
+            background: 
+                radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.95) 0%, rgba(220,212,200,0.85) 70%);
+            border-top: 6px solid #F5E9D8;
+            box-shadow: 0 -15px 40px rgba(0,0,0,0.15);
+            transform: perspective(600px) rotateX(25deg);
+            transform-origin: bottom;
+            overflow: hidden;
+        }
+        .marble-podium-veins {
+            position: absolute; inset: 0; pointer-events: none; opacity: 0.5;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'><path d='M0 100 Q250 250 500 150 T800 300' fill='none' stroke='%23C59B3B' stroke-width='3'/><path d='M100 0 Q300 300 200 500' fill='none' stroke='%23D4AF37' stroke-width='2'/></svg>");
+            background-size: cover;
+        }
+
+        .preview-header {
+            background: rgba(35, 31, 29, 0.92); padding: 14px 20px; display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3); z-index: 20;
+        }
+        .preview-header span { color: var(--gold-light); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+
+        .preview-stage {
+            flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; padding: 40px; z-index: 20; perspective: 1400px;
+        }
+
+        /* Envelope Scene */
+        .envelope-scene {
+            position: relative; display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; transition: transform .6s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 20px;
+        }
+        .envelope-scene:hover { transform: scale(1.02); }
+
+        .envelope-wrapper {
+            width: 420px; height: 280px; background: #736B67; border-radius: 4px;
+            position: relative; box-shadow: 0 30px 60px rgba(35,30,25,0.5), inset 0 0 25px rgba(0,0,0,0.3);
+            background-image: linear-gradient(135deg, #7A726E 0%, #68605C 100%);
+            transform-style: preserve-3d;
+        }
+
+        /* Flap pointing UP when opened (matching the user's second photo) */
+        .env-flap {
+            position: absolute; top: 0; left: 0; width: 0; height: 0;
+            border-left: 210px solid transparent; border-right: 210px solid transparent;
+            border-top: 150px solid #827A75;
+            transform-origin: top; 
+            transition: transform 0.9s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 10;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.3));
+        }
+        /* When opened, flap rotates backwards to reveal inside of flap with ornament */
+        .envelope-scene.is-open .env-flap {
+            transform: rotateX(-145deg);
+        }
+
+        /* Inside Flap Ornament (visible when opened, exactly like photo 2) */
+        .inside-flap-ornament {
+            position: absolute; top: -110px; left: 50%; transform: translateX(-50%);
+            width: 50px; height: 75px; z-index: 12; pointer-events: none; opacity: 0; transition: opacity .4s ease .3s;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150' fill='%23D4AF37'><path d='M50 0 C60 30 75 45 90 60 C75 70 60 90 50 140 C40 90 25 70 10 60 C25 45 40 30 50 0 Z'/><circle cx='50' cy='70' r='10' fill='%23F5E3A2'/></svg>");
+            background-size: contain; background-repeat: no-repeat;
+        }
+        .envelope-scene.is-open .inside-flap-ornament {
+            opacity: 1;
+        }
+
+        /* Pockets */
+        .env-left {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-bottom: 280px solid #68605C; border-right: 210px solid transparent; z-index: 5;
+        }
+        .env-right {
+            position: absolute; bottom: 0; right: 0; width: 0; height: 0;
+            border-bottom: 280px solid #5E5652; border-left: 210px solid transparent; z-index: 5;
+        }
+        .env-bottom {
+            position: absolute; bottom: 0; left: 0; width: 0; height: 0;
+            border-left: 210px solid transparent; border-right: 210px solid transparent;
+            border-bottom: 140px solid #736B67; z-index: 4;
+        }
+
+        /* 4 Corner Ornaments */
+        .filigree-ornament {
+            position: absolute; width: 80px; height: 80px; z-index: 8; pointer-events: none;
+            background-repeat: no-repeat; background-size: contain;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+        }
+        .orn-tl {
+            top: 10px; left: 10px;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M10 10 C35 5 75 15 105 45 C85 30 50 25 35 75 C20 50 15 30 10 10 Z' fill='%23D4AF37'/><path d='M15 25 Q45 35 60 85 Q35 70 15 25' fill='%23F5E3A2'/><circle cx='50' cy='50' r='8' fill='%23FFF'/></svg>");
+        }
+        .orn-tr {
+            top: 10px; right: 10px; transform: scaleX(-1);
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M10 10 C35 5 75 15 105 45 C85 30 50 25 35 75 C20 50 15 30 10 10 Z' fill='%23D4AF37'/><path d='M15 25 Q45 35 60 85 Q35 70 15 25' fill='%23F5E3A2'/><circle cx='50' cy='50' r='8' fill='%23FFF'/></svg>");
+        }
+        .orn-bl {
+            bottom: 10px; left: 10px; transform: scaleY(-1);
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M10 10 C35 5 75 15 105 45 C85 30 50 25 35 75 C20 50 15 30 10 10 Z' fill='%23D4AF37'/><path d='M15 25 Q45 35 60 85 Q35 70 15 25' fill='%23F5E3A2'/><circle cx='50' cy='50' r='8' fill='%23FFF'/></svg>");
+        }
+        .orn-br {
+            bottom: 10px; right: 10px; transform: scale(-1);
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><path d='M10 10 C35 5 75 15 105 45 C85 30 50 25 35 75 C20 50 15 30 10 10 Z' fill='%23D4AF37'/><path d='M15 25 Q45 35 60 85 Q35 70 15 25' fill='%23F5E3A2'/><circle cx='50' cy='50' r='8' fill='%23FFF'/></svg>");
+        }
+
+        /* Gold Wax Seal (moves down when opened) */
+        .wax-seal-center {
+            position: absolute; top: 51.5%; left: 50%; transform: translate(-50%, -50%);
+            width: 70px; height: 70px;
+            background: radial-gradient(circle at 35% 35%, #FCE8B6 0%, #D4AF37 45%, #8B6519 90%);
+            border-radius: 50%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.55), inset 0 3px 6px rgba(255,255,255,0.8);
+            display: flex; align-items: center; justify-content: center; z-index: 15;
+            border: 3px solid #A9824A;
+            font-family: 'Pinyon Script', cursive; font-size: 28px; color: #2C2522;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .envelope-scene.is-open .wax-seal-center {
+            transform: translate(-50%, 40px) scale(0.85);
+            opacity: 0.9;
+        }
+
+        /* Sliding out Invitation Card */
+        .invitation-card-preview {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%) translateY(0);
+            width: 360px; background: #FAF3EC; padding: 25px; border-radius: 10px;
+            text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            z-index: 7; opacity: 0; transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+            border: 1px solid rgba(212,175,55,0.4);
+        }
+        .envelope-scene.is-open .invitation-card-preview {
+            transform: translateX(-50%) translateY(-110px);
+            opacity: 1;
+            z-index: 12;
+        }
+        .invitation-card-preview h2 { font-family: 'Pinyon Script', cursive; font-size: 36px; color: #C29A5B; margin-bottom: 6px; }
+        .invitation-card-preview h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: #43332F; margin-bottom: 10px; }
+        .invitation-card-preview p { font-size: 13px; color: #736A65; line-height: 1.5; margin-bottom: 10px; }
+        .invitation-card-preview .inv-date {
+            background: rgba(194, 154, 91, 0.12); padding: 5px 15px; border-radius: 15px;
+            font-weight: 600; color: #A9824A; font-size: 12px; display: inline-block;
+        }
+
+        .env-hint {
+            margin-top: 20px;
+            color: var(--taupe-dark); font-size: 14px; font-weight: 600;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.9);
+            z-index: 22; animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; transform: translateY(-2px); } }
+
+        /* Documentation Section */
+        .docs-section {
+            margin-top: 60px; background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px; padding: 40px; border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        }
+        .docs-section h2 {
+            font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--taupe-dark); margin-bottom: 20px;
+        }
+        .syntax-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+        }
+        .syntax-card {
+            background: #FAF3EC; padding: 20px; border-radius: 10px; border-right: 4px solid var(--gold);
+        }
+        .syntax-card code { font-family: 'Fira Code', monospace; color: var(--gold-dark); font-weight: bold; }
+        .syntax-card p { font-size: 14px; color: var(--text-soft); margin-top: 8px; line-height: 1.5; }
+
+        footer {
+            text-align: center; padding: 40px 0; color: var(--text-soft); font-size: 13px;
+            border-top: 1px solid rgba(212, 175, 55, 0.2); margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <a href="index.html" class="brand">Wedding Studio</a>
+        <div class="nav-links">
+            <a href="index.html">الرئيسية</a>
+            <a href="studio/builder.html">منشئ الدعوات</a>
+            <a href="seal-lang.html" style="color: var(--gold-dark); font-weight: 700;">SealScript™</a>
+        </div>
+        <a href="studio/builder.html" class="nav-cta">صمم دعوتك</a>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="header-section">
+            <div class="badge">
+                <span>✨ مطابقة تامة لحالة فتح الظرف (كما في الصورة الثانية)</span>
+            </div>
+            <h1>SealScript <span>Open Envelope Edition</span></h1>
+            <p class="subtitle">اضغط على الظرف لمشاهدته يفتح نحو الأعلى تماماً مثل الصورة المرفقة، مع ظهور الزخرفة الداخلية على الغطاء المنفتح وبطاقة الدعوة تخرج بانسيابية!</p>
+        </div>
+
+        <div class="ide-grid">
+            <!-- Editor Pane -->
+            <div class="editor-card">
+                <div class="editor-header">
+                    <div class="window-dots">
+                        <div class="dot dot-red"></div>
+                        <div class="dot dot-yellow"></div>
+                        <div class="dot dot-green"></div>
+                    </div>
+                    <span class="editor-title">envelope.seal</span>
+                    <div class="presets">
+                        <button class="preset-btn" onclick="loadPreset('royal')">👑 ملكي</button>
+                        <button class="preset-btn" onclick="loadPreset('romantic')">🌹 رومانسي</button>
+                    </div>
+                </div>
+                <textarea id="codeEditor" class="editor-body" spellcheck="false">envelope LuxuryEnvelope {
+    groom: "آدم",
+    bride: "لارا",
+    date: "24 سبتمبر 2026",
+    venue: "قصر الفخامة الملكي",
+    seal: "GOLD_WAX",
+    ornament: "BAROQUE_FILIGREE",
+    message: "نتشرف بدعوتكم لمشاركتنا فرحة زواجنا الأبدية"
+}</textarea>
+                <div class="editor-footer">
+                    <div class="compile-status" id="compileStatus">
+                        <span>🟢 جاهز للترجمة (Compiled)</span>
+                    </div>
+                    <button class="run-btn" onclick="compileAndRun()">تنفيذ وختم 🔏</button>
+                </div>
+            </div>
+
+            <!-- Preview Pane -->
+            <div class="preview-card" id="previewCard">
+                <div class="room-bg">
+                    <div class="wall-pillars"></div>
+                </div>
+
+                <!-- 3D Elevated Marble Podium -->
+                <div class="marble-podium">
+                    <div class="marble-podium-veins"></div>
+                </div>
+
+                <div class="preview-header">
+                    <span>محاكاة فتح الظرف (مطابق للصورة الثانية)</span>
+                    <span id="previewStatusLabel" style="color: var(--gold);">اضغط لفتح الظرف</span>
+                </div>
+
+                <div class="preview-stage">
+                    <!-- Envelope Scene -->
+                    <div class="envelope-scene" id="envelopeObj" onclick="toggleEnvelope()">
+                        <div class="envelope-wrapper">
+                            <!-- Inside Flap Ornament (Appears when opened upwards) -->
+                            <div class="inside-flap-ornament"></div>
+
+                            <!-- 4 Corner Ornaments -->
+                            <div class="filigree-ornament orn-tl"></div>
+                            <div class="filigree-ornament orn-tr"></div>
+                            <div class="filigree-ornament orn-bl"></div>
+                            <div class="filigree-ornament orn-br"></div>
+
+                            <div class="env-flap"></div>
+                            <div class="env-left"></div>
+                            <div class="env-right"></div>
+                            <div class="env-bottom"></div>
+                            
+                            <!-- Gold Wax Seal -->
+                            <div class="wax-seal-center" id="sealInitials">A&L</div>
+
+                            <!-- Sliding out Invitation Card -->
+                            <div class="invitation-card-preview" id="invCard">
+                                <h2 id="resCouple">لارا & آدم</h2>
+                                <h3 id="resVenue">قصر الفخامة الملكي</h3>
+                                <p id="resMessage">نتشرف بدعوتكم لمشاركتنا فرحة زواجنا الأبدية</p>
+                                <div class="inv-date" id="resDate">📅 24 سبتمبر 2026</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="env-hint" id="envHint">اضغط على الظرف لفتح الغطاء نحو الأعلى ✨</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation Section -->
+        <div class="docs-section">
+            <h2>📖 مرجع قواعد لغة SealScript</h2>
+            <div class="syntax-grid">
+                <div class="syntax-card">
+                    <code>envelope &lt;Name&gt; { ... }</code>
+                    <p>تعريف الظرف الفاخر والمنصة الرخامية ثلاثية الأبعاد.</p>
+                </div>
+                <div class="syntax-card">
+                    <code>groom: "الاسم" / bride: "الاسم"</code>
+                    <p>أسماء العروسين داخل بطاقة الدعوة المنبثقة.</p>
+                </div>
+                <div class="syntax-card">
+                    <code>seal: "GOLD_WAX"</code>
+                    <p>الختم الشمعي البارز وحركة فتح الغطاء للأعلى مع الزخرفة الداخلية.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 Wedding Studio & SealScript™ — جميع الحقوق محفوظة</p>
+    </footer>
+
+    <script>
+        const presets = {
+            royal: `envelope LuxuryEnvelope {
+    groom: "آدم",
+    bride: "لارا",
+    date: "24 سبتمبر 2026",
+    venue: "قصر الفخامة الملكي",
+    seal: "GOLD_WAX",
+    ornament: "BAROQUE_FILIGREE",
+    message: "نتشرف بدعوتكم لمشاركتنا فرحة زواجنا الأبدية"
+}`,
+            romantic: `envelope SunsetDream {
+    groom: "سليم",
+    bride: "ياسمين",
+    date: "12 أكتوبر 2026",
+    venue: "حدود القصر الزجاجي",
+    seal: "GOLD_WAX",
+    ornament: "BAROQUE_FILIGREE",
+    message: "بمزيد من الحب والفرح، ننتظر حضوركم لنحتفل معاً بليلة العمر"
+}`
+        };
+
+        let isOpen = false;
+
+        function loadPreset(name) {
+            if (presets[name]) {
+                document.getElementById('codeEditor').value = presets[name];
+                compileAndRun();
+            }
+        }
+
+        function parseSealScript(code) {
+            const getVal = (key) => {
+                const regex = new RegExp(`${key}\\s*:\\s*"([^"]+)"`, 'i');
+                const match = code.match(regex);
+                return match ? match[1] : '';
+            };
+            return {
+                groom: getVal('groom') || 'عريس',
+                bride: getVal('bride') || 'عروس',
+                date: getVal('date') || '2026',
+                venue: getVal('venue') || 'قاعة الاحتفالات',
+                message: getVal('message') || 'مرحباً بكم في حفل زفافنا'
+            };
+        }
+
+        function compileAndRun() {
+            const code = document.getElementById('codeEditor').value;
+            const status = document.getElementById('compileStatus');
+            try {
+                const data = parseSealScript(code);
+                
+                document.getElementById('resCouple').textContent = `${data.bride} & ${data.groom}`;
+                document.getElementById('resVenue').textContent = data.venue;
+                document.getElementById('resMessage').textContent = data.message;
+                document.getElementById('resDate').textContent = `📅 ${data.date}`;
+                
+                const bInit = data.bride.charAt(0);
+                const gInit = data.groom.charAt(0);
+                document.getElementById('sealInitials').textContent = `${bInit}&${gInit}`;
+
+                status.innerHTML = '<span>🟢 تم الترجمة والختم بنجاح!</span>';
+                status.style.color = '#27C93F';
+
+                openEnvelope();
+            } catch (err) {
+                status.innerHTML = '<span>🔴 خطأ في بناء الجملة (Syntax Error)</span>';
+                status.style.color = '#FF5F56';
+            }
+        }
+
+        function toggleEnvelope() {
+            if (isOpen) {
+                closeEnvelope();
+            } else {
+                openEnvelope();
+            }
+        }
+
+        function openEnvelope() {
+            isOpen = true;
+            const env = document.getElementById('envelopeObj');
+            const label = document.getElementById('previewStatusLabel');
+            const hint = document.getElementById('envHint');
+
+            env.classList.add('is-open');
+            label.textContent = 'مفتوح (مطابق للصورة الثانية)';
+            label.style.color = '#50E3C2';
+            hint.textContent = 'اضغط مرة أخرى لإغلاق الظرف ✉️';
+        }
+
+        function closeEnvelope() {
+            isOpen = false;
+            const env = document.getElementById('envelopeObj');
+            const label = document.getElementById('previewStatusLabel');
+            const hint = document.getElementById('envHint');
+
+            env.classList.remove('is-open');
+            label.textContent = 'مغلق بختم شمعي ذهبي';
+            label.style.color = 'var(--gold)';
+            hint.textContent = 'اضغط على الظرف لفتح الغطاء نحو الأعلى ✨';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | موقع الدعوات</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div class="login-view" id="loginView">
+        <form class="login-card" id="loginForm">
+            <div class="login-logo">✦</div>
+            <h1>لوحة التحكم</h1>
+            <p class="login-sub">موقع الدعوات — قسم الإدارة</p>
+            <label>اسم المستخدم
+                <input type="text" id="loginUser" autocomplete="username" placeholder="اسم المستخدم">
+            </label>
+            <label>كلمة المرور
+                <input type="password" id="loginPass" autocomplete="current-password" placeholder="كلمة المرور">
+            </label>
+            <p class="login-err" id="loginErr"></p>
+            <button type="submit" class="primary">دخول</button>
+        </form>
+    </div>
+
+    <!-- لوحة التحكم -->
+    <div class="dash-view" id="dashView">
+
+        <header class="dash-header">
+            <div class="dash-title">
+                <span class="dash-logo">✦</span>
+                <h1>لوحة التحكم</h1>
+            </div>
+            <button id="logoutBtn" class="ghost">تسجيل الخروج</button>
+        </header>
+
+        <main class="dash-main">
+
+            <!-- الأسماء والعائلات -->
+            <section class="card">
+                <h2>الأسماء والعائلتان</h2>
+                <label>اسم العريس
+                    <input type="text" id="fGroom">
+                </label>
+                <label>اسم العروس
+                    <input type="text" id="fBride">
+                </label>
+                <label>العائلتان (العنوان الرئيسي)
+                    <input type="text" id="fFamilies">
+                </label>
+            </section>
+
+            <!-- التاريخ -->
+            <section class="card">
+                <h2>التاريخ والعد التنازلي</h2>
+                <label>نص التاريخ الظاهر
+                    <input type="text" id="fDate">
+                </label>
+                <div class="row3">
+                    <label>اليوم
+                        <input type="text" id="fDay">
+                    </label>
+                    <label>الشهر
+                        <input type="text" id="fMonth">
+                    </label>
+                    <label>السنة
+                        <input type="text" id="fYear">
+                    </label>
+                </div>
+                <label>موعد العد التنازلي (الساعة والتاريخ)
+                    <input type="datetime-local" id="fCountdown">
+                </label>
+            </section>
+
+            <!-- برنامج الحفل -->
+            <section class="card">
+                <div class="card-head">
+                    <h2>برنامج الحفل</h2>
+                    <button type="button" id="addProgBtn" class="ghost small">+ إضافة فقرة</button>
+                </div>
+                <div id="progRows"></div>
+            </section>
+
+            <!-- المكان -->
+            <section class="card">
+                <h2>مكان الحفل</h2>
+                <label>اسم القاعة
+                    <input type="text" id="fVenueName">
+                </label>
+                <label>العنوان
+                    <input type="text" id="fVenueAddress">
+                </label>
+                <label>رابط الخريطة
+                    <input type="text" id="fVenueMap">
+                </label>
+            </section>
+
+            <!-- الفيديو -->
+            <section class="card">
+                <h2>مقدمة الفيديو</h2>
+                <label>اسم ملف الفيديو (يوضع داخل مجلد assets)
+                    <input type="text" id="fVideo" list="videoList">
+                    <datalist id="videoList">
+                        <option value="wedding-intro.mp4"></option>
+                    </datalist>
+                </label>
+                <p class="hint">مثال: wedding-intro.mp4 — لو ملفك في مجلد آخر اكتب المسار الكامل أو رابط http.</p>
+            </section>
+
+            <!-- تأكيد الحضور -->
+            <section class="card">
+                <h2>تأكيد الحضور</h2>
+                <label>نص الدعوة للرد
+                    <input type="text" id="fRsvpHint">
+                </label>
+            </section>
+
+            <!-- الصور -->
+            <section class="card">
+                <div class="card-head">
+                    <h2>صور الزفاف</h2>
+                    <button type="button" id="photoAddBtn" class="ghost small">+ إضافة صور</button>
+                </div>
+                <label>اختر صوراً من جهازك (حتى 9 صور)
+                    <input type="file" id="fPhotos" accept="image/*" multiple>
+                </label>
+                <label>أو الصق روابط صور مباشرة (رابط في كل سطر)
+                    <textarea id="fPhotoUrls" rows="3" placeholder="https://...jpeg&#10;https://...jpg"></textarea>
+                </label>
+                <div id="photoList" class="photo-list"></div>
+            </section>
+
+            <!-- المعاينة -->
+            <section class="card">
+                <h2>القالب النشط والمعاينة</h2>
+                <label>القالب المستخدم في الدعوة
+                    <select id="fTemplate">
+                        <option value="luxury">القالب الفاخر (luxury)</option>
+                        <option value="premium">القالب المميز (premium)</option>
+                        <option value="perfect">القالب المثالي (perfect)</option>
+                    </select>
+                </label>
+                <button type="button" id="previewBtn" class="secondary">معاينة الدعوة ↗</button>
+            </section>
+        </main>
+
+        <footer class="dash-actions">
+            <button id="saveBtn" class="primary">حفظ الإعدادات</button>
+            <button id="exportBtn" class="ghost">تصدير نسخة (JSON)</button>
+            <button id="importBtn" class="ghost">استيراد نسخة</button>
+            <input type="file" id="importFile" accept="application/json" hidden>
+            <button id="resetBtn" class="danger-ghost">إعادة تعيين الافتراضي</button>
+        </footer>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

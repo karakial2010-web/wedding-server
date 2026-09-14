@@ -1,0 +1,16 @@
+# ===== الحساس → لن يُرفع إلى GitHub أبداً =====
+server/config.local.json
+.env
+
+# ===== المتوافقيات =====
+node_modules/
+*.log
+
+# ===== بيانات الزبائن (دعوات وصور وردود) =====
+server/uploads/*
+server/data/invites/*
+server/data/rsvps/*
+
+# نظام التشغيل
+.DS_Store
+Thumbs.db

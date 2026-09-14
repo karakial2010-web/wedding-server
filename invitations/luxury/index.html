@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5DCD8">
+    <title>دعوة زفاف | لارا وآدم</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Playfair+Display:wght@500;600;700&family=El+Messiri:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- زخارف أزهار -->
+    <svg class="floral floral-tl" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#C29A5B" stroke-width="1.2" opacity=".55">
+            <circle cx="26" cy="26" r="7"/><ellipse cx="26" cy="19" rx="4.5" ry="7"/>
+            <ellipse cx="19" cy="26" rx="7" ry="4.5"/><ellipse cx="26" cy="33" rx="4.5" ry="7"/>
+            <ellipse cx="33" cy="26" rx="7" ry="4.5"/>
+            <path d="M26 26 Q44 8 62 12"/>
+            <circle cx="62" cy="12" r="5"/>
+        </g>
+        <g fill="none" stroke="#C29A5B" stroke-width="1.2" opacity=".45">
+            <path d="M26 33 Q20 52 30 60"/><ellipse cx="30" cy="64" rx="4" ry="6"/>
+            <path d="M33 30 Q52 44 58 60"/><ellipse cx="59" cy="64" rx="4" ry="6"/>
+        </g>
+    </svg>
+    <svg class="floral floral-br" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#C29A5B" stroke-width="1.2" opacity=".55">
+            <circle cx="74" cy="74" r="7"/><ellipse cx="74" cy="67" rx="4.5" ry="7"/>
+            <ellipse cx="67" cy="74" rx="7" ry="4.5"/><ellipse cx="74" cy="81" rx="4.5" ry="7"/>
+            <ellipse cx="81" cy="74" rx="7" ry="4.5"/>
+            <path d="M74 74 Q56 92 38 88"/>
+            <circle cx="38" cy="88" r="5"/>
+        </g>
+    </svg>
+    <svg class="floral floral-hero" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#C29A5B" stroke-width="1.3" opacity=".6">
+            <circle cx="50" cy="50" r="9"/><ellipse cx="50" cy="40" rx="5.5" ry="9"/>
+            <ellipse cx="40" cy="50" rx="9" ry="5.5"/><ellipse cx="50" cy="60" rx="5.5" ry="9"/>
+            <ellipse cx="60" cy="50" rx="9" ry="5.5"/>
+        </g>
+    </svg>
+
+    <!-- زر تشغيل الموسيقى -->
+    <button id="musicBtn" class="music-btn" title="تشغيل الموسيقى">🎵</button>
+
+    <!-- تخصيص الأسماء -->
+    <button id="namesBtn" class="names-btn" title="تخصيص الأسماء">✎ تحرير الأسماء</button>
+    <div id="namesPanel" class="names-panel">
+        <label>اسم العريس
+            <input id="editGroom" type="text" value="آدم">
+        </label>
+        <label>اسم العروس
+            <input id="editBride" type="text" value="لارا">
+        </label>
+        <button id="namesApply">تطبيق</button>
+    </div>
+
+    <!-- مقدمة بالفيديو -->
+    <div class="video-intro" id="videoIntro">
+        <video id="introVideo" autoplay muted playsinline preload="auto" src="../assets/wedding-intro.mp4"></video>
+        <button class="intro-skip" id="introSkip">تخطّي المقدمة ⏭</button>
+    </div>
+
+    <!-- شاشة فتح الدعوة -->
+    <div class="envelope-screen" id="envelopeScreen"></div>
+
+    <!-- محتوى الدعوة -->
+    <div class="scroll-container" id="invitation">
+
+        <!-- القسم الأول: الترحيب -->
+        <section class="slide hero">
+            <div class="hero-deco">❀</div>
+            <p class="script-en">Together with their families</p>
+            <h1 class="couple-ar">لارا <span class="amp">&</span> آدم</h1>
+            <p class="sub">نتشرف بدعوتكم لمشاركتنا فرحة زواجنا</p>
+            <div class="hero-date">
+                <span>السبت</span>
+                <span>24 سبتمبر</span>
+                <span>2026</span>
+            </div>
+            <div class="scroll-cue">⬇ للتمرير</div>
+        </section>
+
+        <!-- القسم الثاني: العد التنازلي -->
+        <section class="slide countdown-section">
+            <p class="script-en">Counting the days</p>
+            <h2>باقي على فرحتنا</h2>
+            <div id="countdown" class="timer">
+                <div class="time-box"><span id="days">00</span><small>يوم</small></div>
+                <div class="time-box"><span id="hours">00</span><small>ساعة</small></div>
+                <div class="time-box"><span id="minutes">00</span><small>دقيقة</small></div>
+                <div class="time-box"><span id="seconds">00</span><small>ثانية</small></div>
+            </div>
+        </section>
+
+        <!-- القسم الرابع: برنامج الحفل -->
+        <section class="slide program-section">
+            <p class="script-en">The Celebration</p>
+            <h2>برنامج الحفل</h2>
+            <div class="program-cards dl-timeline">
+                <div class="dl-track">
+                    <svg class="dl-path" viewBox="0 0 60 400" preserveAspectRatio="none" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="dlGrad" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0" stop-color="#D4AF37"/>
+                                <stop offset="1" stop-color="#9C7A2E"/>
+                            </linearGradient>
+                        </defs>
+                        <path class="dl-path-bg" pathLength="400" d="M30 0 C 21 34,39 66,30 100 C 21 134,39 166,30 200 C 21 234,39 266,30 300 C 21 334,39 366,30 400"/>
+                        <path class="dl-path-fill" id="dlFill" pathLength="400" d="M30 0 C 21 34,39 66,30 100 C 21 134,39 166,30 200 C 21 234,39 266,30 300 C 21 334,39 366,30 400"/>
+                    </svg>
+                </div>
+                <div class="dl-item">
+                    <div class="dl-dot">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <ellipse cx="12" cy="5.5" rx="3.4" ry="5.4"/>
+                            <ellipse cx="12" cy="18.5" rx="3.4" ry="5.4"/>
+                            <ellipse cx="5.5" cy="12" rx="5.4" ry="3.4"/>
+                            <ellipse cx="18.5" cy="12" rx="5.4" ry="3.4"/>
+                            <ellipse cx="7.6" cy="7.6" rx="5" ry="3.1" transform="rotate(45 7.6 7.6)"/>
+                            <ellipse cx="16.4" cy="16.4" rx="5" ry="3.1" transform="rotate(45 16.4 16.4)"/>
+                            <circle cx="12" cy="12" r="2.8"/>
+                        </svg>
+                    </div>
+                    <div class="prog-card">
+                        <div class="prog-time">7:00 مساءً</div>
+                        <h3>استقبال الضيوف</h3>
+                        <p>باب الضيافة مفتوح وطابور الاستقبال ينتظركم</p>
+                    </div>
+                </div>
+                <div class="dl-item">
+                    <div class="dl-dot">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <ellipse cx="12" cy="5.5" rx="3.4" ry="5.4"/>
+                            <ellipse cx="12" cy="18.5" rx="3.4" ry="5.4"/>
+                            <ellipse cx="5.5" cy="12" rx="5.4" ry="3.4"/>
+                            <ellipse cx="18.5" cy="12" rx="5.4" ry="3.4"/>
+                            <ellipse cx="7.6" cy="7.6" rx="5" ry="3.1" transform="rotate(45 7.6 7.6)"/>
+                            <ellipse cx="16.4" cy="16.4" rx="5" ry="3.1" transform="rotate(45 16.4 16.4)"/>
+                            <circle cx="12" cy="12" r="2.8"/>
+                        </svg>
+                    </div>
+                    <div class="prog-card">
+                        <div class="prog-time">7:30 مساءً</div>
+                        <h3>مراسم العقد</h3>
+                        <p>لحظة توقيع عقد الزواج بمشاركة العائلتين</p>
+                    </div>
+                </div>
+                <div class="dl-item">
+                    <div class="dl-dot">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <ellipse cx="12" cy="5.5" rx="3.4" ry="5.4"/>
+                            <ellipse cx="12" cy="18.5" rx="3.4" ry="5.4"/>
+                            <ellipse cx="5.5" cy="12" rx="5.4" ry="3.4"/>
+                            <ellipse cx="18.5" cy="12" rx="5.4" ry="3.4"/>
+                            <ellipse cx="7.6" cy="7.6" rx="5" ry="3.1" transform="rotate(45 7.6 7.6)"/>
+                            <ellipse cx="16.4" cy="16.4" rx="5" ry="3.1" transform="rotate(45 16.4 16.4)"/>
+                            <circle cx="12" cy="12" r="2.8"/>
+                        </svg>
+                    </div>
+                    <div class="prog-card">
+                        <div class="prog-time">9:00 مساءً</div>
+                        <h3>مأدبة العشاء</h3>
+                        <p>مأدبة عشاء فاخرة على أنغام الموسيقى</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- معرض الصور -->
+        <section class="slide gallery-section" id="gallerySection">
+            <p class="script-en">Our Moments</p>
+            <h2>معرض الصور</h2>
+            <div class="gallery-grid" id="galleryGrid"></div>
+        </section>
+
+        <!-- القسم الخامس: الموقع -->
+        <section class="slide venue-section">
+            <p class="script-en">The Venue</p>
+            <h2>مكان الحفل</h2>
+            <p class="venue-name">قاعة الياسمين للمناسبات</p>
+            <p class="venue-address">طريق الأمير سلطان، جدة</p>
+            <a class="map-btn" href="https://maps.google.com/?q=Jeddah" target="_blank" rel="noopener">
+                افتح الموقع في الخريطة
+            </a>
+        </section>
+
+        <!-- القسم السادس: تأكيد الحضور -->
+        <section class="slide rsvp-section">
+            <p class="script-en">Will you join us?</p>
+            <h2>تأكيد الحضور</h2>
+            <p class="rsvp-hint">نتشرف بردّكم قبل 10 سبتمبر</p>
+            <form id="rsvpForm">
+                <input type="text" id="guestName" placeholder="الاسم الكريم" required>
+                <select id="guestAttendance" required>
+                    <option value="" disabled selected>هل ستشرفوننا بحضوركم؟</option>
+                    <option value="yes">نعم، بكل سرور</option>
+                    <option value="no">أعتذر، لا أستطيع الحضور</option>
+                </select>
+                <button type="submit">إرسال الرد</button>
+            </form>
+            <p class="form-message" id="formMessage"></p>
+        </section>
+
+        <!-- التذييل -->
+        <footer class="footer">
+            <div class="footer-calligraphy">L & A</div>
+            <p>لارا & آدم</p>
+            <p class="footer-note">24 . 09 . 2026 — انتظرونا في الموعد المحدد</p>
+            <p class="template-switch">
+                <a href="../index.html">الصفحة الرئيسية</a>
+                <a href="../premium/index.html">القالب الذهبي</a>
+                <a href="../perfect/index.html">القالب الفاخر</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // تطبيق إعدادات لوحة التحكم
+        (function () {
+            try {
+                var s = JSON.parse(localStorage.getItem('wedding_site_settings') || 'null');
+                if (!s) return;
+
+                // الأسماء
+                if (s.bride && s.groom) {
+                    var amp = document.querySelector('.couple-ar');
+                    if (amp) amp.innerHTML = s.bride + ' <span class="amp">&amp;</span> ' + s.groom;
+                    document.title = 'دعوة زفاف | ' + s.bride + ' و' + s.groom;
+                    var firstOf = function (n) { return n && n.trim() ? Array.from(n.trim())[0].toUpperCase() : ''; };
+                    document.querySelectorAll('.footer-calligraphy').forEach(function (el) {
+                        el.textContent = firstOf(s.bride) + ' & ' + firstOf(s.groom);
+                    });
+                    if (document.getElementById('editGroom')) document.getElementById('editGroom').value = s.groom;
+                    if (document.getElementById('editBride')) document.getElementById('editBride').value = s.bride;
+                }
+
+                // التاريخ في الترحيب
+                if (s.date || s.day || s.month || s.year) {
+                    var dateSpans = document.querySelectorAll('.hero-date span');
+                    if (dateSpans.length === 3) {
+                        if (s.day) dateSpans[0].textContent = s.day;
+                        if (s.month) dateSpans[1].textContent = s.month;
+                        if (s.year) dateSpans[2].textContent = s.year;
+                    }
+                }
+                if (s.countdown) window.__weddingCountdown = s.countdown;
+                if (s.rsvpHint) {
+                    var hint = document.querySelector('.rsvp-hint');
+                    if (hint) hint.textContent = s.rsvpHint;
+                }
+
+                // المكان
+                if (s.venueName) {
+                    var vn = document.querySelector('.venue-name');
+                    if (vn) vn.textContent = s.venueName;
+                }
+                if (s.venueAddress) {
+                    var va = document.querySelector('.venue-address');
+                    if (va) va.textContent = s.venueAddress;
+                }
+                if (s.venueMap) {
+                    var mb = document.querySelector('.map-btn');
+                    if (mb) mb.href = s.venueMap;
+                }
+
+                // الفيديو
+                if (s.video) {
+                    var v = document.getElementById('introVideo');
+                    if (v) v.src = /^https?:\/\//i.test(s.video) ? s.video : ('../assets/' + s.video);
+                }
+
+                // برنامج الحفل
+                var cards = document.querySelector('.program-cards');
+                if (cards && Array.isArray(s.program) && s.program.length) {
+                    var track = cards.querySelector('.dl-track');
+                    cards.innerHTML = '';
+                    if (track) cards.appendChild(track);
+                    s.program.forEach(function (row) {
+                        var item = document.createElement('div');
+                        item.className = 'dl-item';
+                        var dot = document.createElement('div');
+                        dot.className = 'dl-dot';
+                        dot.innerHTML = '<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="3.4" ry="5.4"/><ellipse cx="12" cy="18.5" rx="3.4" ry="5.4"/><ellipse cx="5.5" cy="12" rx="5.4" ry="3.4"/><ellipse cx="18.5" cy="12" rx="5.4" ry="3.4"/><ellipse cx="7.6" cy="7.6" rx="5" ry="3.1" transform="rotate(45 7.6 7.6)"/><ellipse cx="16.4" cy="16.4" rx="5" ry="3.1" transform="rotate(45 16.4 16.4)"/><circle cx="12" cy="12" r="2.8"/></svg>';
+                        var card = document.createElement('div');
+                        card.className = 'prog-card';
+                        var t = document.createElement('div');
+                        t.className = 'prog-time';
+                        t.textContent = row.time || '';
+                        var h3 = document.createElement('h3');
+                        h3.textContent = row.title || '';
+                        var p = document.createElement('p');
+                        p.textContent = row.desc || '';
+                        card.appendChild(t); card.appendChild(h3); card.appendChild(p);
+                        item.appendChild(dot); item.appendChild(card);
+                        cards.appendChild(item);
+                    });
+                }
+
+                // معرض الصور
+                var gSec = document.getElementById('gallerySection');
+                var gGrid = document.getElementById('galleryGrid');
+                var photos = Array.isArray(s.photos) ? s.photos.filter(Boolean) : [];
+                if (gSec && gGrid && photos.length) {
+                    gSec.style.display = '';
+                    photos.forEach(function (src) {
+                        var img = document.createElement('img');
+                        img.src = src;
+                        img.alt = '';
+                        img.loading = 'lazy';
+                        img.addEventListener('click', function () { openGallery(src); });
+                        gGrid.appendChild(img);
+                    });
+                }
+            } catch (e) {}
+        })();
+
+        var galleryLb = document.createElement('div');
+        galleryLb.className = 'gallery-lb';
+        galleryLb.innerHTML = '<img alt="">';
+        document.body.appendChild(galleryLb);
+        galleryLb.addEventListener('click', function () { galleryLb.classList.remove('open'); });
+        function openGallery(src) {
+            var img = galleryLb.querySelector('img');
+            if (img) img.src = src;
+            galleryLb.classList.add('open');
+        }
+    </script>
+
+    <script src="script.js"></script>
+
+<!-- Ø²Ø± Ø§Ù„Ø±Ø¬ÙˆØ¹ Ø®Ø·ÙˆØ© Ù„Ù„Ø®Ù„Ù -->
+<button class="back-step" type="button" aria-label="Ø§Ù„Ø±Ø¬ÙˆØ¹ Ø®Ø·ÙˆØ© Ù„Ù„Ø®Ù„Ù">&#8592;</button>
+<script>
+document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('.back-step') : null;
+    if (!b) return;
+    try {
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage('inviteBack', '*');
+            return;
+        }
+    } catch (err) {}
+    if (window.history.length > 1) { window.history.back(); }
+    else { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+});
+</script>
+</body>
+</html>

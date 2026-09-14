@@ -1,0 +1,1549 @@
+﻿# Wedding Studio — Full Website Source (single file)
+
+Complete source of the entire wedding invitation platform, one file per section.
+Sections use 4-backtick fences; inner 3-backtick fences are inside the code, not delimiters.
+
+> NOTE: `server/config.local.json` (Telegram bot token) is intentionally excluded — secret.
+
+## invitations\assets\wax-seal.svg
+
+````xml
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>3D digital wax seal stamp, rose gold, embossed letter S with botanical leaves</title>
+  <defs>
+    <linearGradient id="metalFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#FCE6D0"/>
+      <stop offset="0.16" stop-color="#F2C9A3"/>
+      <stop offset="0.4"  stop-color="#DFA175"/>
+      <stop offset="0.58" stop-color="#C67F50"/>
+      <stop offset="0.76" stop-color="#A75F36"/>
+      <stop offset="0.9"  stop-color="#8A4320"/>
+      <stop offset="1"    stop-color="#6B2E12"/>
+    </linearGradient>
+
+    <radialGradient id="sheen" cx="0.36" cy="0.28" r="0.85">
+      <stop offset="0"    stop-color="#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="0.3"  stop-color="#FFEEDB" stop-opacity="0.1"/>
+      <stop offset="0.62" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="0.85" stop-color="#2E1206" stop-opacity="0.1"/>
+      <stop offset="1"    stop-color="#3A1606" stop-opacity="0.28"/>
+    </radialGradient>
+
+    <linearGradient id="letterBright" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#FFF3DF"/>
+      <stop offset="0.5"  stop-color="#E2A97B"/>
+      <stop offset="1"    stop-color="#9C5428"/>
+    </linearGradient>
+
+    <linearGradient id="leafFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#F8D7B5"/>
+      <stop offset="0.5"  stop-color="#C9824F"/>
+      <stop offset="1"    stop-color="#753516"/>
+    </linearGradient>
+
+    <linearGradient id="beadFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0"    stop-color="#FBE0C0"/>
+      <stop offset="1"    stop-color="#93471F"/>
+    </linearGradient>
+
+    <linearGradient id="topGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- وجه شمعي عضوي = ختم بارز -->
+    <filter id="sealEdge" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.014" numOctaves="2" seed="5" result="disp"/>
+      <feDisplacementMap in="SourceGraphic" in2="disp" scale="17" xChannelSelector="R" yChannelSelector="G" result="warped"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="12" result="grainT"/>
+      <feColorMatrix in="grainT" type="matrix" values="0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.085 0" result="grainA"/>
+      <feComposite operator="in" in="grainA" in2="warped" result="grainClip"/>
+      <feBlend mode="multiply" in="grainClip" in2="warped"/>
+    </filter>
+
+    <filter id="softBlur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <filter id="microBlur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="5"/>
+    </filter>
+
+    <!-- ورقة (تتشعب من الطرف الأيسر لليمين) -->
+    <g id="leaf">
+      <path d="M0 0 Q42 -58 86 0 Q42 58 0 0 Z" fill="url(#leafFace)" stroke="#6B2A0E" stroke-width="3"/>
+      <path d="M3 0 Q45 -9 83 0" fill="none" stroke="#FFE9CD" stroke-width="2.5" opacity=".85"/>
+      <path d="M3 0 Q45 32 83 0" fill="none" stroke="#54200A" stroke-width="2" opacity=".5"/>
+    </g>
+  </defs>
+
+  <!-- خلفية خضراء صلبة للعزل / الاستخلاص -->
+  <rect width="1024" height="1024" fill="#00A64E"/>
+
+  <!-- ظل سفلي ناعم -->
+  <ellipse cx="512" cy="636" rx="362" ry="318" fill="#04200E" opacity="0.5" filter="url(#softBlur)"/>
+
+  <!-- جسم الختم -->
+  <g filter="url(#sealEdge)">
+    <circle cx="512" cy="512" r="330" fill="url(#metalFace)"/>
+    <circle cx="512" cy="512" r="318" fill="none" stroke="#8A4520" stroke-width="10" opacity="0.55"/>
+    <circle cx="512" cy="512" r="330" fill="url(#sheen)"/>
+
+    <!-- حافة داخلية محفورة -->
+    <circle cx="512" cy="512" r="258" fill="none" stroke="#6E2D11" stroke-width="14"/>
+    <circle cx="512" cy="512" r="258" fill="none" stroke="#F6CFA9" stroke-width="5"/>
+
+    <!-- خرز زخرفي -->
+    <circle cx="512" cy="512" r="288" fill="none" stroke="url(#beadFace)" stroke-width="16" stroke-linecap="round" stroke-dasharray="0 30"/>
+
+    <!-- لمعان علوي -->
+    <path d="M 300 226 A 330 330 0 0 1 724 226" fill="none" stroke="url(#topGlow)" stroke-width="40" filter="url(#microBlur)" opacity="0.5"/>
+  </g>
+
+  <!-- أغصان نباتية (غار) على الجانبين -->
+  <g>
+    <!-- يسار -->
+    <use href="#leaf" transform="translate(214 728) rotate(-64)"/>
+    <use href="#leaf" transform="translate(252 706) rotate(-36)"/>
+    <use href="#leaf" transform="translate(290 660) rotate(-10)"/>
+    <!-- يمين -->
+    <use href="#leaf" transform="translate(810 728) rotate(64) scale(-1,1)"/>
+    <use href="#leaf" transform="translate(772 706) rotate(36) scale(-1,1)"/>
+    <use href="#leaf" transform="translate(734 660) rotate(10) scale(-1,1)"/>
+
+    <!-- الحرف S محفور بارز -->
+    <g transform="rotate(-4 512 512)"
+       font-family="'Playfair Display','Georgia','Times New Roman',serif"
+       font-weight="700" font-size="252"
+       text-anchor="middle" dominant-baseline="central">
+      <text x="512" y="514" fill="#4A1C07" transform="translate(9 13)" opacity="0.92">S</text>
+      <text x="512" y="514" fill="#FFF2DC" transform="translate(-8 -9)">S</text>
+      <text x="512" y="514" fill="url(#letterBright)">S</text>
+    </g>
+  </g>
+</svg>
+````
+
+---
+
+## invitations\luxury\index.html
+
+````html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5DCD8">
+    <title>دعوة زفاف | لارا وآدم</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Playfair+Display:wght@500;600;700&family=El+Messiri:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- زخارف أزهار -->
+    <svg class="floral floral-tl" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#C29A5B" stroke-width="1.2" opacity=".55">
+            <circle cx="26" cy="26" r="7"/><ellipse cx="26" cy="19" rx="4.5" ry="7"/>
+            <ellipse cx="19" cy="26" rx="7" ry="4.5"/><ellipse cx="26" cy="33" rx="4.5" ry="7"/>
+            <ellipse cx="33" cy="26" rx="7" ry="4.5"/>
+            <path d="M26 26 Q44 8 62 12"/>
+            <circle cx="62" cy="12" r="5"/>
+        </g>
+        <g fill="none" stroke="#C29A5B" stroke-width="1.2" opacity=".45">
+            <path d="M26 33 Q20 52 30 60"/><ellipse cx="30" cy="64" rx="4" ry="6"/>
+            <path d="M33 30 Q52 44 58 60"/><ellipse cx="59" cy="64" rx="4" ry="6"/>
+        </g>
+    </svg>
+    <svg class="floral floral-br" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#C29A5B" stroke-width="1.2" opacity=".55">
+            <circle cx="74" cy="74" r="7"/><ellipse cx="74" cy="67" rx="4.5" ry="7"/>
+            <ellipse cx="67" cy="74" rx="7" ry="4.5"/><ellipse cx="74" cy="81" rx="4.5" ry="7"/>
+            <ellipse cx="81" cy="74" rx="7" ry="4.5"/>
+            <path d="M74 74 Q56 92 38 88"/>
+            <circle cx="38" cy="88" r="5"/>
+        </g>
+    </svg>
+    <svg class="floral floral-hero" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#C29A5B" stroke-width="1.3" opacity=".6">
+            <circle cx="50" cy="50" r="9"/><ellipse cx="50" cy="40" rx="5.5" ry="9"/>
+            <ellipse cx="40" cy="50" rx="9" ry="5.5"/><ellipse cx="50" cy="60" rx="5.5" ry="9"/>
+            <ellipse cx="60" cy="50" rx="9" ry="5.5"/>
+        </g>
+    </svg>
+
+    <!-- زر تشغيل الموسيقى -->
+    <button id="musicBtn" class="music-btn" title="تشغيل الموسيقى">🎵</button>
+
+    <!-- تخصيص الأسماء -->
+    <button id="namesBtn" class="names-btn" title="تخصيص الأسماء">✎ تحرير الأسماء</button>
+    <div id="namesPanel" class="names-panel">
+        <label>اسم العريس
+            <input id="editGroom" type="text" value="آدم">
+        </label>
+        <label>اسم العروس
+            <input id="editBride" type="text" value="لارا">
+        </label>
+        <button id="namesApply">تطبيق</button>
+    </div>
+
+    <!-- شاشة فتح الظرف -->
+    <div class="envelope-screen" id="envelopeScreen">
+        <div class="envelope" onclick="openInvitation()">
+            <div class="env-paper"><span class="env-calligraphy">L & A</span></div>
+            <div class="env-flap"></div>
+            <div class="env-front"></div>
+            <div class="env-back"></div>
+            <div class="wax-seal"><span class="seal-txt">A & L</span></div>
+        </div>
+        <p class="env-hint">اضغط على الظرف لفتح الدعوة</p>
+    </div>
+
+    <!-- محتوى الدعوة -->
+    <div class="scroll-container" id="invitation">
+
+        <!-- القسم الأول: الترحيب -->
+        <section class="slide hero">
+            <div class="hero-deco">❀</div>
+            <p class="script-en">Together with their families</p>
+            <h1 class="couple-ar">لارا <span class="amp">&</span> آدم</h1>
+            <p class="sub">نتشرف بدعوتكم لمشاركتنا فرحة زواجنا</p>
+            <div class="hero-date">
+                <span>السبت</span>
+                <span>24 سبتمبر</span>
+                <span>2026</span>
+            </div>
+            <div class="scroll-cue">⬇ للتمرير</div>
+        </section>
+
+        <!-- القسم الثاني: العد التنازلي -->
+        <section class="slide countdown-section">
+            <p class="script-en">Counting the days</p>
+            <h2>باقي على فرحتنا</h2>
+            <div id="countdown" class="timer">
+                <div class="time-box"><span id="days">00</span><small>يوم</small></div>
+                <div class="time-box"><span id="hours">00</span><small>ساعة</small></div>
+                <div class="time-box"><span id="minutes">00</span><small>دقيقة</small></div>
+                <div class="time-box"><span id="seconds">00</span><small>ثانية</small></div>
+            </div>
+        </section>
+
+        <!-- القسم الثالث: قصتنا -->
+        <section class="slide story-section">
+            <p class="script-en">Our Story</p>
+            <h2>قصتنا</h2>
+            <div class="story-line">
+                <div class="story-item">
+                    <span class="story-dot"></span>
+                    <h3>البداية</h3>
+                    <p>التقينا في ربيع 2019 في مقهى صغير، ومن أول محادثة عرفنا أن هذه بداية حكاية جميلة.</p>
+                </div>
+                <div class="story-item">
+                    <span class="story-dot"></span>
+                    <h3>الخطوبة</h3>
+                    <p>في شتاء 2024، وفي حضور العائلتين، اتخذنا أجمل قرار في حياتنا.</p>
+                </div>
+                <div class="story-item">
+                    <span class="story-dot"></span>
+                    <h3>الزفاف</h3>
+                    <p>وهنا نستعد لبداية فصلنا الأجمل، ونحن بأمس الشوق لمشاركتكم فرحتنا.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- القسم الرابع: برنامج الحفل -->
+        <section class="slide program-section">
+            <p class="script-en">The Celebration</p>
+            <h2>برنامج الحفل</h2>
+            <div class="program-cards">
+                <div class="prog-card">
+                    <div class="prog-time">7:00 مساءً</div>
+                    <h3>استقبال الضيوف</h3>
+                    <p>باب الضيافة مفتوح وطابور الاستقبال ينتظركم</p>
+                </div>
+                <div class="prog-card">
+                    <div class="prog-time">7:30 مساءً</div>
+                    <h3>مراسم العقد</h3>
+                    <p>لحظة توقيع عقد الزواج بمشاركة العائلتين</p>
+                </div>
+                <div class="prog-card">
+                    <div class="prog-time">9:00 مساءً</div>
+                    <h3>مأدبة العشاء</h3>
+                    <p>مأدبة عشاء فاخرة على أنغام الموسيقى</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- القسم الخامس: الموقع -->
+        <section class="slide venue-section">
+            <p class="script-en">The Venue</p>
+            <h2>مكان الحفل</h2>
+            <p class="venue-name">قاعة الياسمين للمناسبات</p>
+            <p class="venue-address">طريق الأمير سلطان، جدة</p>
+            <a class="map-btn" href="https://maps.google.com/?q=Jeddah" target="_blank" rel="noopener">
+                افتح الموقع في الخريطة
+            </a>
+        </section>
+
+        <!-- القسم السادس: تأكيد الحضور -->
+        <section class="slide rsvp-section">
+            <p class="script-en">Will you join us?</p>
+            <h2>تأكيد الحضور</h2>
+            <p class="rsvp-hint">نتشرف بردّكم قبل 10 سبتمبر</p>
+            <form id="rsvpForm">
+                <input type="text" id="guestName" placeholder="الاسم الكريم" required>
+                <select id="guestAttendance" required>
+                    <option value="" disabled selected>هل ستشرفوننا بحضوركم؟</option>
+                    <option value="yes">نعم، بكل سرور</option>
+                    <option value="no">أعتذر، لا أستطيع الحضور</option>
+                </select>
+                <button type="submit">إرسال الرد</button>
+            </form>
+            <p class="form-message" id="formMessage"></p>
+        </section>
+
+        <!-- التذييل -->
+        <footer class="footer">
+            <div class="footer-calligraphy">L & A</div>
+            <p>لارا & آدم</p>
+            <p class="footer-note">24 . 09 . 2026 — انتظرونا في الموعد المحدد</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+````
+
+---
+
+## invitations\luxury\style.css
+
+````css
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --blush: #F5DCD8;
+    --blush-light: #FDF6F3;
+    --cream: #FAF3EC;
+    --gold: #C29A5B;
+    --gold-dark: #A9824A;
+    --text: #5A4A46;
+    --text-soft: #9A8B86;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* ---------- زر الموسيقى ---------- */
+.music-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 100;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(194,154,91,0.5);
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+    opacity: 0;
+    pointer-events: none;
+}
+.music-btn.playing { animation: spin 3s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---------- شاشة الظرف ---------- */
+.envelope-screen {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(130% 110% at 70% 8%, #f9e8e4 0%, #fff9f6 40%, #fffdfb 68%, #f6e8e0 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    transition: opacity 0.8s ease;
+}
+.envelope-screen.fade-out { opacity: 0; pointer-events: none; }
+
+.envelope {
+    position: relative;
+    width: 300px;
+    height: 210px;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+}
+@keyframes envLuxFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.envelope-screen::before {
+    content: ''; position: absolute; top: -12vw; right: -10vw;
+    width: 46vw; height: 46vw; max-width: 520px; max-height: 520px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(214,161,140,.5), transparent 68%);
+    filter: blur(60px); pointer-events: none;
+}
+@media (min-width: 561px) { .envelope { animation: envLuxFloat 6s ease-in-out infinite; } }
+.envelope:hover { animation: none; transform: scale(1.03); }
+.env-back {
+    position: absolute; inset: 0;
+    background: #E8C6BE;
+    border-radius: 8px;
+    z-index: 0;
+}
+.env-paper {
+    position: absolute; left: 20px; right: 20px; top: 26px; bottom: 40px;
+    background: #FFFDF6; border-radius: 4px; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 10px 22px rgba(0,0,0,.18);
+    transition: transform .9s cubic-bezier(.2,.9,.3,1.14);
+}
+.envelope .env-calligraphy { font-family: 'Pinyon Script', cursive; font-size: 36px; color: var(--gold); }
+.envelope.open .env-paper { transform: translateY(-150%) scale(1.05) rotate(-1.5deg); z-index: 10; }
+
+.env-front {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #F6E3DC, #EFCFC6);
+    border-radius: 8px;
+    z-index: 4;
+    clip-path: polygon(0 18%, 50% 62%, 100% 18%, 100% 100%, 0 100%);
+}
+.env-flap {
+    position: absolute; top: 0; left: 0; width: 100%; height: 58%;
+    background: linear-gradient(180deg, #EED8CF, #E2C8BE);
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    border-radius: 8px 8px 0 0;
+    transform-origin: top;
+    z-index: 5;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.12));
+}
+.envelope.open .env-flap { transform: rotateX(178deg); z-index: 1; }
+
+.wax-seal {
+    position: absolute;
+    top: 118px; left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    width: 70px; height: 70px;
+    border-radius: 53% 47% 60% 40% / 47% 61% 39% 55%;
+    display: flex; align-items: center; justify-content: center;
+    color: #FFF6EA;
+    font-family: 'Pinyon Script', cursive;
+    font-size: 23px;
+    z-index: 6;
+background:
+        radial-gradient(circle at 30% 26%, rgba(255,236,218,.5) 0%, rgba(255,205,175,.16) 28%, transparent 56%),
+        radial-gradient(circle at 68% 82%, rgba(70,8,6,.55) 30%, rgba(0,0,0,0) 62%),
+        linear-gradient(155deg, #E8876A 0%, #C64A34 38%, #982517 66%, #6E120B 100%);
+    box-shadow:
+        0 8px 18px rgba(110,18,12,.45),
+        0 2px 5px rgba(0,0,0,.25),
+        inset 0 4px 7px rgba(255,228,206,.5),
+        inset -4px -6px 12px rgba(60,4,2,.55),
+        inset 0 0 0 1.5px rgba(255,210,180,.28),
+        inset 0 0 0 6px rgba(115,18,12,.16);
+    transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .5s ease, filter .5s ease;
+}
+.wax-seal::before {
+    content: ''; position: absolute; left: 6%; right: 6%; bottom: -13px; height: 28px;
+    background:
+        radial-gradient(ellipse 10px 14px at 12% 88%, #B13A28 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 6px 15px at 30% 76%, #D0543E 45%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 12px 17px at 52% 94%, #9E2619 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 7px 14px at 74% 82%, #C04936 50%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 5px 9px at 91% 90%, #B8402D 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 4px 6px at 42% 70%, #C74A36 50%, rgba(140,28,15,0) 60%);
+    filter: blur(.35px);
+}
+.wax-seal::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.8 0'/></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+    background-size: 130px 130px;
+    mix-blend-mode: multiply;
+    opacity: .34;
+    pointer-events: none;
+}
+.envelope.open .wax-seal { transform: translate(-50%, -50%) rotate(20deg) scale(1.5); opacity: 0; }
+
+.env-hint {
+    margin-top: 30px;
+    color: #806862;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    animation: probe 2s ease-in-out infinite;
+}
+@keyframes probe { 0%,100% { opacity: .5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.04); } }
+
+/* ---------- التمرير ---------- */
+.scroll-container {
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+.scroll-container.visible { opacity: 1; }
+
+.slide {
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    position: relative;
+}
+
+/* ---------- نصوص مشتركة ---------- */
+.script-en {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 34px;
+    color: var(--gold);
+    margin-bottom: 6px;
+}
+h2 {
+    font-family: 'El Messiri', serif;
+    font-size: 34px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 30px;
+}
+
+/* ---------- الترحيب ---------- */
+.hero { background: linear-gradient(160deg, #F5DCD8, #FDF3EF 60%, #FBE98F22); }
+.hero-deco { font-size: 40px; color: var(--gold); margin-bottom: 10px; }
+.couple-ar {
+    font-family: 'El Messiri', serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--text);
+}
+.couple-ar .amp { font-family: 'Cormorant Garamond', serif; color: var(--gold); font-style: italic; }
+.sub { color: var(--text-soft); font-weight: 300; margin-top: 12px; font-size: 17px; }
+.hero-date {
+    display: flex; gap: 28px;
+    margin-top: 30px;
+    font-family: 'El Messiri', serif;
+}
+.hero-date span { font-size: 15px; color: var(--text-soft); border-bottom: 1px solid var(--gold); padding-bottom: 6px; }
+.scroll-cue {
+    position: absolute; bottom: 30px;
+    color: var(--text-soft);
+    font-size: 13px;
+    animation: bounce 2s infinite;
+}
+@keyframes bounce { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(8px);} }
+
+/* ---------- العد التنازلي ---------- */
+.countdown-section { background: var(--blush-light); }
+.timer { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.time-box {
+    min-width: 84px;
+    padding: 22px 10px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(194,154,91,0.15);
+    border: 1px solid rgba(194,154,91,0.25);
+}
+.time-box span {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    font-weight: 600;
+    color: var(--gold-dark);
+}
+.time-box small { color: var(--text-soft); font-size: 13px; }
+
+/* ---------- القصة ---------- */
+.story-section { background: #FFFDFB; }
+.story-line { border-right: 2px solid rgba(194,154,91,0.4); max-width: 340px; padding-right: 24px; margin-top: 10px; }
+.story-item { position: relative; margin-bottom: 34px; text-align: right; }
+.story-dot {
+    position: absolute;
+    right: -33px; top: 6px;
+    width: 14px; height: 14px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #fff, 0 0 0 6px rgba(194,154,91,0.3);
+}
+.story-item h3 { font-family: 'El Messiri', serif; color: var(--gold-dark); margin-bottom: 6px; }
+.story-item p { color: var(--text-soft); font-size: 14px; line-height: 1.8; }
+
+/* ---------- البرنامج ---------- */
+.program-section { background: linear-gradient(160deg, #F5DCD8, #FFF5F0); }
+.program-cards { display: flex; flex-direction: column; gap: 16px; width: 100%; max-width: 380px; }
+.prog-card {
+    background: rgba(255,255,255,0.85);
+    border: 1px solid rgba(194,154,91,0.25);
+    border-radius: 14px;
+    padding: 20px 24px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+.prog-card:hover { transform: translateY(-4px); }
+.prog-time {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 26px;
+    color: var(--gold-dark);
+}
+.prog-card h3 { font-family: 'El Messiri', serif; margin: 4px 0; }
+.prog-card p { color: var(--text-soft); font-size: 13px; }
+
+/* ---------- المكان ---------- */
+.venue-section { background: #FFFDFB; }
+.venue-name { font-family: 'El Messiri', serif; font-size: 24px; color: var(--text); }
+.venue-address { color: var(--text-soft); margin-top: 8px; font-size: 15px; }
+.map-btn {
+    display: inline-block;
+    margin-top: 24px;
+    padding: 12px 26px;
+    background: var(--gold);
+    color: #fff;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 15px;
+    box-shadow: 0 6px 16px rgba(194,154,91,0.35);
+    transition: background 0.3s;
+}
+.map-btn:hover { background: var(--gold-dark); }
+
+/* ---------- تأكيد الحضور ---------- */
+.rsvp-section { background: var(--blush-light); }
+.rsvp-hint { color: var(--text-soft); font-size: 14px; margin-bottom: 22px; margin-top: -20px; }
+#rsvpForm { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 340px; }
+input, select {
+    padding: 14px 16px;
+    border: 1px solid rgba(194,154,91,0.4);
+    border-radius: 10px;
+    background: #fff;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    text-align: right;
+}
+input:focus, select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(194,154,91,0.15); }
+button[type="submit"] {
+    padding: 14px;
+    background: var(--gold);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+button[type="submit"]:hover { background: var(--gold-dark); }
+.form-message { margin-top: 16px; font-size: 15px; color: var(--gold-dark); min-height: 20px; font-weight: 500; }
+
+/* ---------- التذييل ---------- */
+.footer {
+    scroll-snap-align: end;
+    min-height: 60vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    background: var(--text);
+    color: #F3E7DE;
+    padding: 40px 20px;
+}
+.footer-calligraphy {
+    font-family: 'Pinyon Script', cursive;
+    font-size: 46px;
+    color: var(--gold);
+}
+.footer p { margin-top: 8px; font-family: 'El Messiri', serif; }
+.footer-note { color: #CBB9AE; font-size: 13px; font-family: 'IBM Plex Sans Arabic', sans-serif !important; }
+
+/* ---------- ظهور تدريجي عند التمرير ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.on { opacity: 1; transform: none; }
+
+a, button, input, select { -webkit-tap-highlight-color: transparent; }
+
+/* ---------- زخارف أزهار ---------- */
+.floral { position: fixed; width: 200px; height: 200px; pointer-events: none; z-index: 60; }
+.floral-tl { top: -28px; left: -28px; animation: floralSway 7s ease-in-out infinite; }
+.floral-br { bottom: -28px; right: -28px; animation: floralSway 6.5s ease-in-out infinite reverse; }
+.floral-hero { position: absolute; top: 34px; right: 20px; width: 84px; height: 84px; animation: floralSpin 16s linear infinite; }
+@keyframes floralSway {
+    0%, 100% { transform: rotate(-4deg) translate(0, 0); }
+    50%      { transform: rotate(4deg) translate(3px, -4px); }
+}
+@keyframes floralSpin { to { transform: rotate(360deg); } }
+
+/* ---------- زر ولوحة تخصيص الأسماء ---------- */
+.names-btn {
+    position: fixed; top: 20px; right: 20px; z-index: 120;
+    background: #fff; border: 1px solid rgba(194,154,91,.45);
+    color: var(--gold-dark); font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 13px; padding: 8px 16px; border-radius: 20px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    transition: transform .2s, background .2s;
+}
+.names-btn:hover { transform: translateY(-2px); background: #fffdf6; }
+.names-panel {
+    position: fixed; top: 72px; right: 20px; z-index: 120;
+    background: #fff; border-radius: 14px; border: 1px solid rgba(194,154,91,.3);
+    padding: 18px; width: 240px; box-shadow: 0 16px 40px rgba(0,0,0,.18);
+    display: none; flex-direction: column; gap: 12px;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+}
+.names-panel.open { display: flex; animation: panelIn .3s ease; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.names-panel label { font-size: 13px; color: var(--text-soft); display: flex; flex-direction: column; gap: 6px; }
+.names-panel input {
+    padding: 10px 12px; border: 1px solid rgba(194,154,91,.4); border-radius: 8px;
+    font-family: inherit; text-align: right; font-size: 14px; color: var(--text);
+}
+.names-panel input:focus { border-color: var(--gold); outline: none; }
+.names-panel button {
+    padding: 11px; border: none; border-radius: 8px; background: var(--gold); color: #fff;
+    font-family: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+}
+.names-panel button:hover { background: var(--gold-dark); }
+
+/* الختم: الحرف محفور في الشمع */
+.wax-seal .seal-txt {
+    font-family: 'Pinyon Script', cursive;
+    color: rgba(70,8,4,.92);
+    text-shadow: 0 1px 0 rgba(255,228,205,.55), 0 -1px 1px rgba(0,0,0,.4), 0 2px 3px rgba(0,0,0,.38);
+}
+
+@media (max-width: 420px) {
+    .couple-ar { font-size: 44px; }
+    .time-box { min-width: 70px; }
+    .time-box span { font-size: 32px; }
+}
+````
+
+---
+
+## invitations\luxury\script.js
+
+````js
+// ---------- فتح الدعوة ----------
+function openInvitation() {
+    const env = document.querySelector('.envelope');
+    env.classList.add('open');
+
+    setTimeout(() => {
+        document.getElementById('envelopeScreen').classList.add('fade-out');
+        const invite = document.getElementById('invitation');
+        invite.classList.add('visible');
+        document.body.style.overflow = 'hidden';
+        document.querySelector('.music-btn').style.opacity = '1';
+        document.querySelector('.music-btn').style.pointerEvents = 'auto';
+        startCountdown();
+        addReveals();
+    }, 800);
+}
+
+// ---------- العد التنازلي ----------
+function startCountdown() {
+    const target = new Date('September 24, 2026 19:00:00').getTime();
+    const d = (n) => String(n).padStart(2, '0');
+
+    const update = () => {
+        const diff = target - Date.now();
+        if (diff <= 0) {
+            document.getElementById('days').textContent = '00';
+            document.getElementById('hours').textContent = '00';
+            document.getElementById('minutes').textContent = '00';
+            document.getElementById('seconds').textContent = '00';
+            return;
+        }
+        document.getElementById('days').textContent = d(Math.floor(diff / 86400000));
+        document.getElementById('hours').textContent = d(Math.floor(diff % 86400000 / 3600000));
+        document.getElementById('minutes').textContent = d(Math.floor(diff % 3600000 / 60000));
+        document.getElementById('seconds').textContent = d(Math.floor(diff % 60000 / 1000));
+    };
+    update();
+    setInterval(update, 1000);
+}
+
+// ---------- ظهور تدريجي ----------
+function addReveals() {
+    const els = document.querySelectorAll('#invitation .slide > *:not(.scroll-cue)');
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+            if (e.isIntersecting) {
+                e.target.classList.add('on');
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.15 });
+
+    els.forEach((el) => {
+        el.classList.add('reveal');
+        io.observe(el);
+    });
+
+    // بطاقات البرنامج تظهر واحدة تلو الأخرى عند التمرير
+    const cards = document.querySelectorAll('.prog-card');
+    cards.forEach((card, i) => {
+        card.classList.add('reveal');
+        card.style.transitionDelay = (0.15 * i) + 's';
+        io.observe(card);
+    });
+}
+
+// ---------- تخصيص الأسماء (بأحرف محفورة) ----------
+const namesBtn = document.getElementById('namesBtn');
+const namesPanel = document.getElementById('namesPanel');
+if (namesBtn && namesPanel) {
+    namesBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        namesPanel.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+        if (namesPanel.classList.contains('open') &&
+            !namesPanel.contains(e.target) &&
+            e.target !== namesBtn &&
+            !namesBtn.contains(e.target)) {
+            namesPanel.classList.remove('open');
+        }
+    });
+    document.getElementById('namesApply').addEventListener('click', () => {
+        const groom = document.getElementById('editGroom').value.trim();
+        const bride = document.getElementById('editBride').value.trim();
+        if (!groom || !bride) return;
+        const gI = Array.from(groom)[0].toUpperCase();
+        const bI = Array.from(bride)[0].toUpperCase();
+        document.querySelector('.couple-ar').innerHTML = bride + ' <span class="amp">&amp;</span> ' + groom;
+        document.querySelectorAll('.env-calligraphy, .footer-calligraphy').forEach((el) => (el.textContent = bI + ' & ' + gI));
+        document.querySelectorAll('.seal-txt').forEach((el) => (el.textContent = gI + ' & ' + bI));
+        document.title = 'دعوة زفاف | ' + bride + ' و' + groom;
+        namesPanel.classList.remove('open');
+    });
+}
+
+// ---------- الموسيقى (نغمات لطيفة عبر Web Audio) ----------
+const musicBtn = document.getElementById('musicBtn');
+let audioCtx = null;
+let musicOn = false;
+let musicTimer = null;
+
+const NOTES = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25];
+
+function playNote(freq, time, dur = 1.4, vol = 0.12) {
+    const ctx = audioCtx;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(vol, time + 0.15);
+    gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(time);
+    osc.stop(time + dur + 0.1);
+}
+
+function playMelody() {
+    if (!audioCtx || !musicOn) return;
+    const now = audioCtx.currentTime;
+    let t = now + 0.1;
+    NOTES.forEach((n) => {
+        playNote(n, t);
+        playNote(n * 0.5, t, 1.4, 0.06); // نغمة أوكتاف منخفضة
+        t += 0.55;
+    });
+    musicTimer = setTimeout(playMelody, 4000);
+}
+
+musicBtn.addEventListener('click', () => {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    musicOn = !musicOn;
+    if (musicOn) {
+        musicBtn.textContent = '🎵';
+        musicBtn.classList.add('playing');
+        playMelody();
+    } else {
+        clearTimeout(musicTimer);
+        musicBtn.classList.remove('playing');
+    }
+});
+
+// ---------- نموذج تأكيد الحضور ----------
+document.getElementById('rsvpForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('guestName').value.trim();
+    const answer = document.getElementById('guestAttendance').value;
+    const msg = document.getElementById('formMessage');
+
+    if (answer === 'yes') {
+        msg.textContent = 'شكراً ' + name + '، يسعدنا حضوركم وبانتظاركم! ❤';
+    } else {
+        msg.textContent = 'شكراً ' + name + '، ستفقدنا فرحة حضوركم، ونشكر اهتمامكم.';
+    }
+    e.target.reset();
+    setTimeout(() => (msg.textContent = ''), 6000);
+});
+````
+
+---
+
+## invitations\perfect\index.html
+
+````html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@200;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>دعوة زفاف</title>
+</head>
+<body>
+
+    <svg class="floral floral-tl" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#6B8E95" stroke-width="1.2" opacity=".5">
+            <circle cx="26" cy="26" r="7"/><ellipse cx="26" cy="19" rx="4.5" ry="7"/>
+            <ellipse cx="19" cy="26" rx="7" ry="4.5"/><ellipse cx="26" cy="33" rx="4.5" ry="7"/>
+            <ellipse cx="33" cy="26" rx="7" ry="4.5"/>
+            <path d="M26 26 Q44 8 62 12"/>
+            <circle cx="62" cy="12" r="5"/>
+            <path d="M26 33 Q20 52 30 60"/><ellipse cx="30" cy="64" rx="4" ry="6"/>
+            <path d="M33 30 Q52 44 58 60"/><ellipse cx="59" cy="64" rx="4" ry="6"/>
+        </g>
+    </svg>
+    <svg class="floral floral-br" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#6B8E95" stroke-width="1.2" opacity=".5">
+            <circle cx="74" cy="74" r="7"/><ellipse cx="74" cy="67" rx="4.5" ry="7"/>
+            <ellipse cx="67" cy="74" rx="7" ry="4.5"/><ellipse cx="74" cy="81" rx="4.5" ry="7"/>
+            <ellipse cx="81" cy="74" rx="7" ry="4.5"/>
+            <path d="M74 74 Q56 92 38 88"/>
+            <circle cx="38" cy="88" r="5"/>
+        </g>
+    </svg>
+
+    <button id="namesBtn" class="names-btn" title="تخصيص الأسماء">✎ تحرير الأسماء</button>
+    <div id="namesPanel" class="names-panel">
+        <label>اسم العريس <input id="editGroom" type="text" value="آدم"></label>
+        <label>اسم العروس <input id="editBride" type="text" value="لارا"></label>
+        <button id="namesApply">تطبيق</button>
+    </div>
+
+    <div class="container">
+        <!-- قسم الظرف -->
+        <section class="slide" id="envelope-section">
+            <div class="envelope" onclick="openInvitation()">
+                <div class="env-paper">L & A</div>
+                <div class="flap"></div>
+                <div class="front"></div>
+                <div class="seal"><span class="seal-txt">A&L</span></div>
+            </div>
+            <p class="open-hint">اضغط على الظرف لفتح الدعوة</p>
+        </section>
+
+        <!-- قسم الترحيب -->
+        <section class="slide hidden" id="main-invitation">
+            <h1>آل المنصور وآل العمري</h1>
+            <p>نتشرف بدعوتكم لمشاركتنا فرحتنا</p>
+            <div class="names">لارا & آدم</div>
+            <div class="date">24 . 09 . 2026</div>
+        </section>
+
+        <!-- قسم الجدول الزمني -->
+        <section class="slide hidden" id="timeline">
+            <h2>برنامج الحفل</h2>
+            <div class="timeline-line">
+                <div class="event"><span>7:00</span> استقبال الضيوف</div>
+                <div class="event"><span>7:30</span> مراسم العقد</div>
+                <div class="event"><span>8:00</span> جلسة التهاني</div>
+                <div class="event"><span>9:00</span> مأدبة العشاء</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function openInvitation() {
+            const env = document.querySelector('.envelope');
+            if (!env || env.classList.contains('open')) return;
+            env.classList.add('open');
+            setTimeout(function () {
+                document.getElementById('envelope-section').style.display = 'none';
+                document.getElementById('main-invitation').classList.remove('hidden');
+                document.getElementById('timeline').classList.remove('hidden');
+                wireReveals();
+            }, 1000);
+        }
+
+        // ظهور تدريجي عند التمرير
+        function wireReveals() {
+            const io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('on');
+                        io.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.event, .slide h1, .slide h2, .slide > p').forEach(function (el, i) {
+                el.classList.add('reveal');
+                el.style.transitionDelay = (0.1 * i) + 's';
+                io.observe(el);
+            });
+        }
+
+        // تخصيص الأسماء (بأحرف محفورة)
+        var namesBtn = document.getElementById('namesBtn');
+        var namesPanel = document.getElementById('namesPanel');
+        namesBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            namesPanel.classList.toggle('open');
+        });
+        document.addEventListener('click', function (e) {
+            if (namesPanel.classList.contains('open') && !namesPanel.contains(e.target) &&
+                e.target !== namesBtn && !namesBtn.contains(e.target)) {
+                namesPanel.classList.remove('open');
+            }
+        });
+        document.getElementById('namesApply').addEventListener('click', function () {
+            var groom = document.getElementById('editGroom').value.trim();
+            var bride = document.getElementById('editBride').value.trim();
+            if (!groom || !bride) return;
+            document.querySelector('.names').textContent = bride + ' & ' + groom;
+            document.querySelector('.env-paper').textContent = bride.charAt(0).toUpperCase() + ' & ' + groom.charAt(0).toUpperCase();
+            document.querySelector('.seal-txt').textContent = groom.charAt(0).toUpperCase() + '&' + bride.charAt(0).toUpperCase();
+            namesPanel.classList.remove('open');
+        });
+    </script>
+</body>
+</html>
+````
+
+---
+
+## invitations\perfect\script.js
+
+````js
+// عد تنازلي بسيط ليوم 24-9-2026
+const targetDate = new Date('September 24, 2026 19:00:00').getTime();
+
+setInterval(() => {
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    document.getElementById('days').innerText = days;
+    document.getElementById('hours').innerText = hours;
+    document.getElementById('minutes').innerText = minutes;
+}, 1000);
+````
+
+---
+
+## invitations\perfect\style.css
+
+````css
+* { box-sizing: border-box; }
+html, body {
+    margin: 0; padding: 0;
+    font-family: 'Amiri', serif;
+    background-color: #f7f3ef;
+    color: #5c6b73;
+}
+
+.container {
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.slide { width: 100%; height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.slide#envelope-section { background: radial-gradient(130% 110% at 70% 8%, #f9e8e4 0%, #fff9f6 40%, #fffdfb 68%, #f6e8e0 100%); }
+.hidden { display: none; }
+
+/* الظرف */
+.envelope {
+    position: relative;
+    width: 280px; height: 200px;
+    background: #e6d6c4;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform .4s;
+}
+@keyframes envPerfFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.slide#envelope-section::before {
+    content: ''; position: absolute; top: -12vw; right: -10vw;
+    width: 46vw; height: 46vw; max-width: 520px; max-height: 520px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(214,161,140,.5), transparent 68%);
+    filter: blur(60px); pointer-events: none;
+}
+@media (min-width: 561px) { .envelope { animation: envPerfFloat 6s ease-in-out infinite; } }
+.envelope:hover { animation: none; transform: scale(1.03); }
+
+.front {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #F0E2D2, #E2CDB8);
+    border-radius: 6px;
+    clip-path: polygon(0 20%, 50% 64%, 100% 20%, 100% 100%, 0 100%);
+    z-index: 4;
+}
+.env-paper {
+    position: absolute; left: 18px; right: 18px; top: 22px; bottom: 34px;
+    background: #fffaf0;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: #a48040; font-size: 26px; font-family: 'Cinzel', serif;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    z-index: 2;
+    transition: transform .9s cubic-bezier(.2,.9,.3,1.12);
+}
+.flap {
+    position: absolute; top: 0; left: 0; width: 100%; height: 56%;
+    background: linear-gradient(180deg, #EBD9C4, #DCC5AC);
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    border-radius: 6px 6px 0 0;
+    transform-origin: top;
+    transition: transform .7s ease;
+    z-index: 5;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.12));
+}
+.seal {
+    position: absolute; top: 112px; left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    width: 70px; height: 70px;
+    border-radius: 53% 47% 60% 40% / 47% 61% 39% 55%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff6ea; font-size: 22px; font-weight: bold;
+    z-index: 6;
+    background:
+        radial-gradient(circle at 30% 26%, rgba(255,236,218,.5) 0%, rgba(255,205,175,.16) 28%, transparent 56%),
+        radial-gradient(circle at 68% 82%, rgba(80,10,8,.55) 30%, rgba(0,0,0,0) 62%),
+        linear-gradient(155deg, #E8876A 0%, #C64A34 38%, #982517 66%, #6E120B 100%);
+    box-shadow:
+        0 8px 16px rgba(120,22,14,.45),
+        0 2px 5px rgba(0,0,0,.25),
+        inset 0 4px 7px rgba(255,228,206,.5),
+        inset -4px -6px 12px rgba(70,6,4,.55),
+        inset 0 0 0 1px rgba(255,205,175,.2),
+        inset 0 0 0 5px rgba(120,20,14,.12);
+    transition: transform .5s, opacity .5s;
+}
+.seal::before {
+    content: ''; position: absolute; left: 6%; right: 6%; bottom: -13px; height: 28px;
+    background:
+        radial-gradient(ellipse 10px 14px at 12% 88%, #B13A28 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 6px 15px at 30% 76%, #D0543E 45%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 12px 17px at 52% 94%, #9E2619 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 7px 14px at 74% 82%, #C04936 50%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 5px 9px at 91% 90%, #B8402D 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 4px 6px at 42% 70%, #C74A36 50%, rgba(140,28,15,0) 60%);
+    filter: blur(.35px);
+}
+.seal::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.8 0'/></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+    background-size: 130px 130px;
+    mix-blend-mode: multiply;
+    opacity: .34;
+    pointer-events: none;
+}
+.envelope.open .env-paper { transform: translateY(-150%) scale(1.05) rotate(-1.5deg); z-index: 10; }
+.envelope.open .flap { transform: rotateX(178deg); z-index: 1; }
+.envelope.open .seal { transform: translate(-50%, -50%) rotate(20deg) scale(1.5); opacity: 0; }
+
+.open-hint { margin-top: 26px; color: #8a7a6a; font-size: 15px; animation: pulse 1.8s infinite; }
+@keyframes pulse { 0%,100% { opacity: .45; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+
+/* ---------- أحرف محفورة (فقط داخل الختم) ---------- */
+.seal-txt {
+    color: rgba(40,55,62,.95);
+    text-shadow: 0 1px 0 rgba(255,244,232,.6), 0 -1px 1px rgba(0,0,0,.4), 0 2px 3px rgba(0,0,0,.35);
+}
+
+/* ---------- زخارف أزهار ---------- */
+.floral { position: fixed; width: 170px; height: 170px; pointer-events: none; z-index: 60; }
+.floral-tl { top: -24px; left: -24px; animation: floralSway 7s ease-in-out infinite; }
+.floral-br { bottom: -24px; right: -24px; animation: floralSway 6.5s ease-in-out infinite reverse; }
+@keyframes floralSway {
+    0%, 100% { transform: rotate(-4deg) translate(0, 0); }
+    50%      { transform: rotate(4deg) translate(3px, -4px); }
+}
+
+/* ---------- زر ولوحة تخصيص الأسماء ---------- */
+.names-btn {
+    position: fixed; top: 18px; right: 18px; z-index: 120;
+    background: #fff; border: 1px solid rgba(106,142,149,.5);
+    color: #4a5a63; font-family: 'Cairo', sans-serif;
+    font-size: 13px; padding: 8px 16px; border-radius: 20px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    transition: transform .2s, background .2s;
+}
+.names-btn:hover { transform: translateY(-2px); background: #f7fafb; }
+.names-panel {
+    position: fixed; top: 68px; right: 18px; z-index: 120;
+    background: #fff; border-radius: 14px; border: 1px solid rgba(106,142,149,.35);
+    padding: 18px; width: 240px; box-shadow: 0 16px 40px rgba(0,0,0,.16);
+    display: none; flex-direction: column; gap: 12px;
+    font-family: 'Cairo', sans-serif;
+}
+.names-panel.open { display: flex; animation: panelIn .3s ease; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.names-panel input {
+    padding: 10px 12px; border: 1px solid rgba(106,142,149,.4); border-radius: 8px;
+    font-family: inherit; text-align: right; font-size: 14px; color: #4a5a63;
+}
+.names-panel input:focus { border-color: #6B8E95; outline: none; }
+.names-panel button {
+    padding: 11px; border: none; border-radius: 8px; background: #6B8E95; color: #fff;
+    font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.names-panel button:hover { background: #4a5a63; }
+
+/* ---------- ظهور تدريجي عند التمرير ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(34px);
+    transition: opacity .8s ease, transform .8s ease;
+}
+.reveal.on { opacity: 1; transform: none; }
+
+/* التنسيق العام للنصوص */
+h1 { font-size: 2.5rem; font-weight: normal; margin-bottom: 10px; }
+.names { font-size: 3rem; margin: 20px 0; color: #4a5a63; }
+.date { font-size: 1.2rem; letter-spacing: 5px; }
+
+/* Timeline */
+.timeline-line { border-right: 1px solid #dcdcdc; padding-right: 20px; margin-top: 30px; }
+.event { margin: 20px 0; font-size: 1.2rem; }
+.event span { display: block; font-size: 0.9rem; color: #a3b1ba; }
+````
+
+---
+
+## invitations\premium\index.html
+
+````html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>دعوة زفاف لارا & آدم</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <svg class="floral floral-tl" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#8B5E3C" stroke-width="1.2" opacity=".45">
+            <circle cx="26" cy="26" r="7"/><ellipse cx="26" cy="19" rx="4.5" ry="7"/>
+            <ellipse cx="19" cy="26" rx="7" ry="4.5"/><ellipse cx="26" cy="33" rx="4.5" ry="7"/>
+            <ellipse cx="33" cy="26" rx="7" ry="4.5"/>
+            <path d="M26 26 Q44 8 62 12"/>
+            <circle cx="62" cy="12" r="5"/>
+            <path d="M26 33 Q20 52 30 60"/><ellipse cx="30" cy="64" rx="4" ry="6"/>
+            <path d="M33 30 Q52 44 58 60"/><ellipse cx="59" cy="64" rx="4" ry="6"/>
+        </g>
+    </svg>
+    <svg class="floral floral-br" viewBox="0 0 100 100" aria-hidden="true">
+        <g fill="none" stroke="#8B5E3C" stroke-width="1.2" opacity=".45">
+            <circle cx="74" cy="74" r="7"/><ellipse cx="74" cy="67" rx="4.5" ry="7"/>
+            <ellipse cx="67" cy="74" rx="7" ry="4.5"/><ellipse cx="74" cy="81" rx="4.5" ry="7"/>
+            <ellipse cx="81" cy="74" rx="7" ry="4.5"/>
+            <path d="M74 74 Q56 92 38 88"/>
+            <circle cx="38" cy="88" r="5"/>
+        </g>
+    </svg>
+
+    <button id="namesBtn" class="names-btn" title="تخصيص الأسماء">✎ تحرير الأسماء</button>
+    <div id="namesPanel" class="names-panel">
+        <label>اسم العريس <input id="editGroom" type="text" value="آدم"></label>
+        <label>اسم العروس <input id="editBride" type="text" value="لارا"></label>
+        <button id="namesApply">تطبيق</button>
+    </div>
+
+    <div class="scroll-container">
+        <!-- شاشة الظرف التفاعلية -->
+        <section class="slide" id="opening">
+            <div class="envelope-box" onclick="openInvitation()" role="button" aria-label="افتح الدعوة">
+                <div class="env-back"></div>
+                <div class="env-paper">L & A</div>
+                <div class="env-front"></div>
+                <div class="env-flap"></div>
+                <div class="wax-seal"><span class="seal-txt">A&L</span></div>
+            </div>
+            <p class="open-hint">اضغط على الظرف لفتح الدعوة</p>
+        </section>
+
+        <!-- الترحيب -->
+        <section class="slide">
+            <div class="content-box">
+                <h1>آل المنصور وآل العمري</h1>
+                <p>نتشرف بدعوتكم لمشاركتنا فرحة زفافنا</p>
+                <div class="couple-names">لارا & آدم</div>
+                <div class="wedding-date">24.09.2026</div>
+            </div>
+        </section>
+
+        <!-- البرنامج الزمني -->
+        <section class="slide">
+            <div class="timeline">
+                <h2>برنامج الحفل</h2>
+                <div class="item"><span>7:00</span> استقبال الضيوف</div>
+                <div class="item"><span>7:30</span> مراسم العقد</div>
+                <div class="item"><span>8:00</span> مأدبة العشاء</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        function openInvitation() {
+            var box = document.querySelector('.envelope-box');
+            if (!box || box.classList.contains('opened')) return;
+            box.classList.add('opened');
+            setTimeout(function () {
+                var slide = document.getElementById('opening');
+                if (slide) slide.remove();
+                wireReveals();
+            }, 1000);
+        }
+
+        // ظهور تدريجي عند التمرير
+        function wireReveals() {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('on');
+                        io.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.item, .content-box h1, .content-box > p, .timeline h2').forEach(function (el, i) {
+                el.classList.add('reveal');
+                el.style.transitionDelay = (0.1 * i) + 's';
+                io.observe(el);
+            });
+        }
+
+        // تخصيص الأسماء (بأحرف محفورة)
+        var namesBtn = document.getElementById('namesBtn');
+        var namesPanel = document.getElementById('namesPanel');
+        namesBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            namesPanel.classList.toggle('open');
+        });
+        document.addEventListener('click', function (e) {
+            if (namesPanel.classList.contains('open') && !namesPanel.contains(e.target) &&
+                e.target !== namesBtn && !namesBtn.contains(e.target)) {
+                namesPanel.classList.remove('open');
+            }
+        });
+        document.getElementById('namesApply').addEventListener('click', function () {
+            var groom = document.getElementById('editGroom').value.trim();
+            var bride = document.getElementById('editBride').value.trim();
+            if (!groom || !bride) return;
+            document.querySelector('.couple-names').textContent = bride + ' & ' + groom;
+            document.querySelector('.env-paper').textContent = bride.charAt(0).toUpperCase() + ' & ' + groom.charAt(0).toUpperCase();
+            document.querySelector('.seal-txt').textContent = groom.charAt(0).toUpperCase() + '&' + bride.charAt(0).toUpperCase();
+            namesPanel.classList.remove('open');
+        });
+    </script>
+</body>
+</html>
+````
+
+---
+
+## invitations\premium\style.css
+
+````css
+* { box-sizing: border-box; }
+body { margin: 0; background: #fdfaf7; font-family: 'Amiri', serif; color: #5c6b73; }
+.scroll-container { height: 100vh; overflow-y: auto; scroll-snap-type: y mandatory; }
+.slide { height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-bottom: 1px solid #f1e6df; position: relative; }
+.slide#opening { background: radial-gradient(130% 110% at 70% 8%, #f9e8e4 0%, #fff9f6 40%, #fffdfb 68%, #f6e8e0 100%); }
+
+/* الظرف */
+.envelope-box {
+    position: relative;
+    width: 300px; height: 210px;
+    background: #dcd0c0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.4s;
+    overflow: visible;
+}
+@keyframes envPremFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.slide#opening::before {
+    content: ''; position: absolute; top: -12vw; right: -10vw;
+    width: 46vw; height: 46vw; max-width: 520px; max-height: 520px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(214,161,140,.5), transparent 68%);
+    filter: blur(60px); pointer-events: none;
+}
+@media (min-width: 561px) { .envelope-box { animation: envPremFloat 6s ease-in-out infinite; } }
+.envelope-box:hover { animation: none; transform: scale(1.03); }
+
+.env-back {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #e9ddcd, #cdbbab);
+    border-radius: 5px 5px 10px 10px;
+    z-index: 1;
+}
+.env-paper {
+    position: absolute; left: 18px; right: 18px; top: 22px; bottom: 34px;
+    background: #fffaf0;
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    color: #a48040; font-size: 28px; font-family: 'Cinzel', serif;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+    z-index: 2;
+    transition: transform .8s cubic-bezier(.2,.9,.3,1.1);
+}
+.env-front {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #EADAC8, #DDC6AE);
+    border-radius: 5px;
+    z-index: 4;
+    clip-path: polygon(0 20%, 50% 64%, 100% 20%, 100% 100%, 0 100%);
+}
+.env-flap {
+    position: absolute; top: 0; left: 0; width: 100%; height: 56%;
+    background: linear-gradient(180deg, #EFE0CE, #DDC5AC);
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    border-radius: 5px 5px 0 0;
+    transform-origin: top;
+    transition: transform .7s ease;
+    z-index: 5;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,.12));
+}
+.wax-seal {
+    position: absolute; top: 112px; left: 50%;
+    transform: translate(-50%, -50%) rotate(-5deg);
+    width: 70px; height: 70px;
+    border-radius: 53% 47% 60% 40% / 47% 61% 39% 55%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff6ea; font-size: 23px; font-weight: bold;
+    z-index: 6;
+    background:
+        radial-gradient(circle at 30% 26%, rgba(255,236,218,.5) 0%, rgba(255,205,175,.16) 28%, transparent 56%),
+        radial-gradient(circle at 68% 82%, rgba(80,10,8,.55) 30%, rgba(0,0,0,0) 62%),
+        linear-gradient(155deg, #E8876A 0%, #C64A34 38%, #982517 66%, #6E120B 100%);
+    box-shadow:
+        0 8px 16px rgba(120,22,14,.45),
+        0 2px 5px rgba(0,0,0,.25),
+        inset 0 4px 7px rgba(255,228,206,.5),
+        inset -4px -6px 12px rgba(70,6,4,.55),
+        inset 0 0 0 1px rgba(255,205,175,.2),
+        inset 0 0 0 5px rgba(120,20,14,.12);
+    transition: transform .5s, opacity .5s;
+}
+.wax-seal::before {
+    content: ''; position: absolute; left: 6%; right: 6%; bottom: -13px; height: 28px;
+    background:
+        radial-gradient(ellipse 10px 14px at 12% 88%, #B13A28 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 6px 15px at 30% 76%, #D0543E 45%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 12px 17px at 52% 94%, #9E2619 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 7px 14px at 74% 82%, #C04936 50%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 5px 9px at 91% 90%, #B8402D 55%, rgba(140,28,15,0) 62%),
+        radial-gradient(ellipse 4px 6px at 42% 70%, #C74A36 50%, rgba(140,28,15,0) 60%);
+    filter: blur(.35px);
+}
+.wax-seal::after {
+    content: ''; position: absolute; inset: -1px; border-radius: inherit;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='150' height='150'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.8 0'/></filter><rect width='150' height='150' filter='url(%23n)'/></svg>");
+    background-size: 130px 130px;
+    mix-blend-mode: multiply;
+    opacity: .34;
+    pointer-events: none;
+}
+.open-hint { margin-top: 26px; color: #8a7a6a; font-size: 15px; animation: pulse 1.8s infinite; }
+
+/* فتح الظرف */
+.envelope-box.opened .env-paper {
+    transform: translateY(-150%) rotate(-1.5deg) scale(1.05);
+    z-index: 10;
+}
+.envelope-box.opened .env-flap { transform: rotateX(178deg); z-index: 1; }
+.envelope-box.opened .wax-seal { transform: translate(-50%, -50%) rotate(20deg) scale(1.5); opacity: 0; }
+
+.timeline { width: 80%; }
+.item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #dcdcdc; }
+.item span { color: #a3b1ba; }
+.couple-names { font-size: 3.5rem; margin: 20px 0; color: #4a5a63; }
+
+@keyframes pulse { 0%,100% { opacity: .45; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+
+/* ---------- أحرف محفورة (فقط داخل الختم) ---------- */
+.seal-txt {
+    color: rgba(70,8,4,.92);
+    text-shadow: 0 1px 0 rgba(255,228,205,.55), 0 -1px 1px rgba(0,0,0,.4), 0 2px 3px rgba(0,0,0,.38);
+}
+
+/* ---------- زخارف أزهار ---------- */
+.floral { position: fixed; width: 170px; height: 170px; pointer-events: none; z-index: 60; }
+.floral-tl { top: -24px; left: -24px; animation: floralSway 7s ease-in-out infinite; }
+.floral-br { bottom: -24px; right: -24px; animation: floralSway 6.5s ease-in-out infinite reverse; }
+@keyframes floralSway {
+    0%, 100% { transform: rotate(-4deg) translate(0, 0); }
+    50%      { transform: rotate(4deg) translate(3px, -4px); }
+}
+
+/* ---------- زر ولوحة تخصيص الأسماء ---------- */
+.names-btn {
+    position: fixed; top: 18px; right: 18px; z-index: 120;
+    background: #fff; border: 1px solid rgba(164,128,64,.5);
+    color: #a48040; font-family: 'Amiri', serif;
+    font-size: 13px; padding: 8px 16px; border-radius: 20px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    transition: transform .2s, background .2s;
+}
+.names-btn:hover { transform: translateY(-2px); background: #fffaf0; }
+.names-panel {
+    position: fixed; top: 68px; right: 18px; z-index: 120;
+    background: #fff; border-radius: 14px; border: 1px solid rgba(164,128,64,.35);
+    padding: 18px; width: 240px; box-shadow: 0 16px 40px rgba(0,0,0,.16);
+    display: none; flex-direction: column; gap: 12px;
+    font-family: 'Amiri', serif;
+}
+.names-panel.open { display: flex; animation: panelIn .3s ease; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.names-panel input {
+    padding: 10px 12px; border: 1px solid rgba(164,128,64,.4); border-radius: 8px;
+    font-family: inherit; text-align: right; font-size: 14px; color: #5c6b73;
+}
+.names-panel input:focus { border-color: #a48040; outline: none; }
+.names-panel button {
+    padding: 11px; border: none; border-radius: 8px; background: #a48040; color: #fff;
+    font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+}
+.names-panel button:hover { background: #8a6a34; }
+
+/* ---------- ظهور تدريجي عند التمرير ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(34px);
+    transition: opacity .8s ease, transform .8s ease;
+}
+.reveal.on { opacity: 1; transform: none; }
+````
+
+---
+

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-title="pv_title">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#F5DCD8">
+    <title>دعوة زفاف</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500&family=Playfair+Display:wght@500;700&family=El+Messiri:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/style.css">
+    <script src="assets/i18n.js"></script>
+    <script src="assets/theme.js"></script>
+</head>
+<body class="preview-page">
+
+    <button class="music-btn" id="musicBtn" style="opacity:1;pointer-events:auto;position:fixed;top:20px;left:20px;z-index:100;width:48px;height:48px;border-radius:50%;border:1px solid rgba(194,154,91,0.5);background:rgba(255,255,255,0.9);font-size:20px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.1);" data-i18n-title="pv_music">🎵</button>
+    <button class="lang-fab" id="langBtn" data-i18n-title="lang_hint" style="top:20px;inset-inline-end:78px;">🌐</button>
+
+    <div class="pv-container" id="pvContainer">
+        <!-- الترحيب -->
+        <section class="pv-slide">
+            <p class="pv-script" id="pvCalligraphy">L & A</p>
+            <h1 class="pv-couple"><span id="pvGroom">آدم</span> <span class="pv-amp">&</span> <span id="pvBride">لارا</span></h1>
+            <p class="pv-welcome" id="pvWelcome">يسعدنا دعوتكم لمشاركتنا</p>
+            <p class="pv-occasion" id="pvOccasion">دعوة زفاف</p>
+            <p class="pv-h2" style="font-size:18px;letter-spacing:3px;margin-top:20px;" id="pvDate"></p>
+            <div class="scroll-cue" style="position:absolute;bottom:30px;animation:floaty 2s infinite;" data-i18n="pv_scroll">⬇ ابدأ التمرير</div>
+        </section>
+
+        <!-- العد التنازلي -->
+        <section class="pv-slide">
+            <p class="pv-script" data-i18n="pv_count_kick">باقي على الفرحة</p>
+            <h2 class="pv-h2" data-i18n="pv_count_t">باقي على فرحتنا</h2>
+            <div class="pv-timer" id="pvTimer"></div>
+        </section>
+
+        <!-- القصة -->
+        <section class="pv-slide">
+            <p class="pv-script" data-i18n="pv_story_kick">Our Story</p>
+            <h2 class="pv-h2" data-i18n="pv_story_t">قصتنا</h2>
+            <div class="pv-story" id="pvStory"></div>
+        </section>
+
+        <!-- البرنامج -->
+        <section class="pv-slide">
+            <p class="pv-script" data-i18n="pv_prog_kick">The Celebration</p>
+            <h2 class="pv-h2" data-i18n="pv_prog_t">برنامج الحفل</h2>
+            <div class="pv-prog" id="pvProgram"></div>
+        </section>
+
+        <!-- معرض الصور -->
+        <section class="pv-slide" id="pvGallerySec">
+            <p class="pv-script" data-i18n="pv_gal_kick">Our Moments</p>
+            <h2 class="pv-h2" data-i18n="pv_gal_t">لحظاتنا</h2>
+            <p class="pv-gallery" id="pvGallery"></p>
+        </section>
+
+        <!-- المكان -->
+        <section class="pv-slide">
+            <p class="pv-script" data-i18n="pv_venue_kick">The Venue</p>
+            <h2 class="pv-h2" id="pvPlaceTitle">مكان المناسبة</h2>
+            <h3 class="pv-h2" style="font-size:22px;margin-bottom:8px;" id="pvVenue"></h3>
+            <p style="color:var(--text-soft);font-size:15px;" id="pvAddress"></p>
+            <div class="pv-map-wrap">
+                <iframe id="pvMapFrame" src="https://maps.google.com/maps?q=Jeddah&z=13&output=embed&hl=ar" loading="lazy" referrerpolicy="no-referrer-when-downgrade" data-i18n-title="pv_map_title"></iframe>
+            </div>
+            <div class="map-actions">
+                <a class="pv-map" id="pvMapBtn" href="https://maps.google.com/?q=Jeddah" target="_blank" rel="noopener" data-i18n="pv_map_open">فتح في خرائط جوجل ↗</a>
+            </div>
+        </section>
+
+        <!-- تأكيد الحضور -->
+        <section class="pv-slide">
+            <p class="pv-script" data-i18n="pv_rsvp_kick">Will you join us?</p>
+            <h2 class="pv-h2" data-i18n="pv_rsvp_t">تأكيد الحضور</h2>
+            <p style="color:var(--text-soft);font-size:14px;margin-top:-16px;margin-bottom:20px;" id="pvRsvpHint"></p>
+            <form class="pv-rsvp-form" id="pvForm">
+                <input type="text" id="guestName" data-i18n-ph="pv_name_ph" required>
+                <select id="guestAttendance" required>
+                    <option value="" disabled selected data-i18n="pv_choice">هل ستشرفوننا بحضوركم؟</option>
+                    <option value="yes" data-i18n="pv_yes">نعم، بكل سرور</option>
+                    <option value="no" data-i18n="pv_no">أعتذر، لا أستطيع الحضور</option>
+                </select>
+                <button type="submit" data-i18n="pv_send">إرسال الرد</button>
+            </form>
+            <p class="form-message" id="formMessage" style="margin-top:14px;color:var(--gold-dark);font-weight:600;min-height:20px;"></p>
+        </section>
+
+        <!-- الخاتمة -->
+        <section class="pv-slide">
+            <div class="pv-script" style="font-size:40px;margin-bottom:20px;">L & A</div>
+            <h2 class="pv-h2" style="font-size:24px;line-height:1.9;" id="pvCloser"></h2>
+            <p style="color:var(--text-soft);margin-top:14px;font-size:14px;" id="pvFooterNames"></p>
+        </section>
+    </div>
+
+    <!-- المظروف بختم الشمع -->
+    <div class="env-overlay" id="envOverlay">
+        <div class="env-word type-caret" id="envType"></div>
+        <div class="env" id="envCard" role="button" aria-label="افتح الدعوة">
+            <div class="env-back"></div>
+            <div class="env-letter"><span class="env-letter-text" id="envNames">L & A</span></div>
+            <div class="env-flap"></div>
+            <div class="env-seal"><i id="envSeal">❤</i></div>
+        </div>
+        <div class="env-hint" data-i18n="env_hint">اضغط هنا لفتح الدعوة</div>
+    </div>
+    <button class="env-fab" id="envFab" data-i18n-title="env_reopen">💌</button>
+
+    <!-- لافتة حان الوقت -->
+    <div class="pv-now-banner" id="pvNowBanner">
+        <div class="pv-now-card">
+            <div class="t" id="nowMonogram">L & A</div>
+            <div class="s" data-i18n="pv_now_h">حان الوقت! 🎉</div>
+            <div class="s sub" id="nowFirstTitle"></div>
+            <button type="button" data-i18n="pv_now_btn">نعم، نحن في الطريق</button>
+        </div>
+    </div>
+
+    <a class="wa-fab" href="https://wa.me/963951742592" target="_blank" rel="noopener" aria-label="WhatsApp support" data-i18n-title="wa_tooltip">
+        <svg viewBox="0 0 32 32"><path d="M16.04 3C9.5 3 4.16 8.34 4.16 14.87c0 2.09.55 4.13 1.59 5.93L4 26l5.36-1.4a11.85 11.85 0 0 0 6.68 2.07c6.54 0 11.87-5.33 11.87-11.86C28.1 8.34 22.58 3 16.04 3zm0 21.7c-1.87 0-3.7-.5-5.27-1.44l-.38-.22-3.1.81.83-3.03-.25-.4a9.84 9.84 0 0 1-1.51-5.25c0-5.43 4.42-9.85 9.85-9.85 5.43 0 9.84 4.42 9.84 9.85 0 5.43-4.41 9.53-9.84 9.53zm5.4-7.36c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.88-.78-1.48-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.34.45-.51.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.11 3.22 5.1 4.52.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.42.25-.7.25-1.3.17-1.42-.07-.13-.27-.2-.57-.35z"/></svg>
+    </a>
+
+    <script src="assets/preview.js"></script>
+</body>
+</html>
