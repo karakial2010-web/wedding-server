@@ -1,78 +1,7 @@
 const $ = (id) => document.getElementById(id);
 
-// ---------- إشعارات تيليجرام (صاحب المنصة) ----------
-const TG_TOKEN = '8824585629:AAH_LvoiuuRFLrAZG_uKEiQNTUZce_k8-aE';
-const TG_CHAT_ID = '6902746761';
-let __tgSent = false;
-
-function tgEsc(v) {
-    return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function buildTgText() {
-    const occ = { wedding: '💍 زفاف', engagement: '💞 خطوبة', birthday: '🎂 عيد ميلاد', graduation: '🎓 تخرج', baby: '👶 مولود', queen: '👑 حفلة ملكة', opening: '🏪 افتتاح', family: '👨‍👩‍👧‍👦 لقاء عائلي', religious: '🕌 مناسبة دينية', other: '✨ أخرى' }[data.occasion] || data.occasion || '—';
-    const photos = (Array.isArray(data.photos) ? data.photos : []).filter(Boolean);
-    const prog = (Array.isArray(data.program) ? data.program : []).filter(Boolean);
-    const lines = [
-        '💍 <b>زبون جديد أنشأ موقعاً من المنصّة!</b>',
-        '━━━━━━━━━━━━━━',
-        '👤 العريس/الزبون: ' + tgEsc(data.groom),
-        '👰 العروس: ' + tgEsc(data.bride),
-        '🎉 المناسبة: ' + tgEsc(occ) + (data.occasionName ? ' (' + tgEsc(data.occasionName) + ')' : ''),
-        '📅 التاريخ: ' + tgEsc(data.date) + ' — ' + tgEsc(data.time),
-        '📍 المكان: ' + tgEsc(data.venue) + ' — ' + tgEsc(data.address),
-        '🗺 الخريطة: ' + tgEsc(data.mapQuery),
-        '📞 هاتف الزبون: ' + tgEsc(data.phone)
-    ];
-    if (prog.length) {
-        lines.push('📋 البرنامج:');
-        prog.forEach((p, i) => lines.push('   ' + (i + 1) + '. ' + tgEsc(p.time) + ' — ' + tgEsc(p.title)));
-    }
-    lines.push('🖼 الصور: ' + (photos.length ? photos.length + ' صورة' : 'لا توجد'));
-    return lines.join('\n');
-}
-
-function tgSendPhotoMsg() {
-    const photos = (Array.isArray(data.photos) ? data.photos : []).filter(Boolean);
-    const src = photos[0];
-    if (!src) return Promise.resolve(false);
-    try {
-        const caption = '🖼 أول صورة من ' + (data.groom || '') + ' & ' + (data.bride || '') + ' — ' + (data.date || '');
-        if (/^data:image\//.test(src)) {
-            const blobArr = src.split(',');
-            const raw = atob(blobArr[1]);
-            const u8 = new Uint8Array(raw.length);
-            for (let i = 0; i < raw.length; i++) u8[i] = raw.charCodeAt(i);
-            const file = new File([u8], 'cover.jpg', { type: blobArr[0].match(/data:(.*?);/)[1] });
-            const fd = new FormData();
-            fd.append('chat_id', TG_CHAT_ID);
-            fd.append('caption', caption);
-            fd.append('photo', file);
-            return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendPhoto', { method: 'POST', body: fd }).then(() => true).catch(() => false);
-        }
-        if (/^https?:\/\//.test(src)) {
-            const fd = new FormData();
-            fd.append('chat_id', TG_CHAT_ID);
-            fd.append('caption', caption);
-            fd.append('photo', src);
-            return fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendPhoto', { method: 'POST', body: fd }).then(() => true).catch(() => false);
-        }
-    } catch (e) {}
-    return Promise.resolve(false);
-}
-
-function notifyTelegram() {
-    if (__tgSent) return;
-    __tgSent = true;
-    try {
-        fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TG_CHAT_ID, text: buildTgText(), parse_mode: 'HTML' })
-        }).catch(() => {});
-        tgSendPhotoMsg();
-    } catch (e) {}
-}
+// ملاحظة أمنية: إشعارات تيليجرام (النص + الصور) تُرسل الآن حصراً من السيرفر
+// (server.js) بعد استلام /api/invite — لا يوجد أي توكن أو مفتاح سري هنا بالفرونت إند.
 
 // ---------- حالة الافتراضية ----------
 const DEFAULT_DATA = {
@@ -139,11 +68,9 @@ function buildOccasionOptions(keep) {
     else sel.value = data.occasion;
 }
 
-// ---------- تحميل محفوظ ----------
-try {
-    const saved = localStorage.getItem('invite-studio.builder');
-    if (saved) data = { ...DEFAULT_DATA, ...JSON.parse(saved) };
-} catch (e) {}
+// ---------- بيانات جلسة جديدة ----------
+// عمداً بدون أي تحميل من localStorage: كل زيارة/جلسة للمنشئ تبلش ببيانات فاضية
+// جديدة حتى لو الزائر غادر الموقع ورجع، ولا تبقى بياناته اللي كتبها محفوظة.
 data.occasion = occKey(data.occasion);
 data.music = Object.assign({ kind: 'category', category: 'soft', custom: '' }, data.music || {});
 
@@ -267,16 +194,8 @@ function collect() {
     document.querySelectorAll('#programRepeater .rep-item').forEach((item, i) => {
         data.program.push({ time: item.querySelector('.pr-time').value, title: item.querySelector('.pr-title').value, text: item.querySelector('.pr-text').value });
     });
-
-    try {
-        localStorage.setItem('invite-studio.builder', JSON.stringify(data));
-    } catch (e) {
-        // تجاوز حد التخزين: نبقي النصوص ونزيل بعض الصور القديمة
-        const photos = data.photos;
-        if (photos.length > 3) photos.splice(3);
-        try { localStorage.setItem('invite-studio.builder', JSON.stringify(data)); }
-        catch (e2) { console.warn('تخزين غير متاح', e2); }
-    }
+    // ملاحظة: لا نخزّن أي شيء بمتصفح الزائر (localStorage) عمداً — البيانات تبقى
+    // بذاكرة الصفحة فقط طوال الجلسة الحالية، وتُرسل للسيرفر فقط عند الضغط "إنهاء".
 }
 
 // ---------- معاينة حية ----------
@@ -559,19 +478,10 @@ async function handleFiles(files) {
             data.photos.push(compressed);
         } catch (err) { console.warn(err); }
     }
-    try {
-        saveNow();
-        renderPhotos();
-        renderPreview();
-        $('photoNotice').textContent = I18N.t('photo_ok');
-    } catch (err) {
-        // تجاوز حد التخزين
-        data.photos = data.photos.slice(0, 3);
-        localStorage.setItem('invite-studio.builder', JSON.stringify(data));
-        renderPhotos();
-        renderPreview();
-        $('photoNotice').textContent = I18N.t('photo_full');
-    }
+    saveNow();
+    renderPhotos();
+    renderPreview();
+    $('photoNotice').textContent = I18N.t('photo_ok');
 }
 
 // ---------- النشر ومشاركة الرابط ----------
@@ -583,8 +493,6 @@ async function publishInvite() {
     result.innerHTML = '';
 
     collect();
-
-    notifyTelegram();
 
     // التحقق قبل الإنهاء: الهاتف واسم المناسبة مطلوبان للإرسال إلى فريق المنصة
     if (!data.phone || String(data.phone).replace(/\D/g, '').length < 9) {
@@ -622,22 +530,17 @@ async function publishInvite() {
             body: JSON.stringify(payload)
         });
         if (!res.ok) throw new Error(I18N.t('pub_err'));
-        const j = await res.json();
+        await res.json();
 
-        const link = (window.location.origin + j.url).replace(/\/$/, '');
+        // عمداً: لا يُعرض أي رابط للزبون هنا. السيرفر يرسل الرابط الكامل
+        // مع كل التفاصيل والصور إلى تيليجرام صاحب المنصة فقط؛ الزبون يستلم
+        // رابط دعوته يدوياً بعد تأكيد الدفع.
         result.innerHTML =
             '<p class="publish-done">' + I18N.t('pub_ok') + '</p>' +
-            '<div class="publish-link"><input id="pubLink" value="' + link + '" readonly onclick="this.select()">' +
-            '<button class="copy-btn" id="pubCopy">' + I18N.t('pub_copy') + '</button></div>' +
             '<p class="publish-note">' + I18N.t('pub_note') + '</p>';
-
-        document.getElementById('pubCopy').addEventListener('click', () => {
-            const inp = document.getElementById('pubLink');
-            inp.select();
-            try { navigator.clipboard.writeText(link); } catch (e) {}
-            document.getElementById('pubCopy').textContent = I18N.t('pub_copied');
-            setTimeout(() => { document.getElementById('pubCopy').textContent = I18N.t('pub_copy'); }, 2000);
-        });
+        btn.textContent = I18N.t('pub_btn');
+        btn.disabled = true; // منع إعادة الإرسال المكرر لنفس الدعوة
+        return;
     } catch (err) {
         result.innerHTML = '<p class="publish-err">⚠️ ' + (err.message || I18N.t('pub_errgen')) + '</p>';
     }

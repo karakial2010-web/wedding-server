@@ -1,5 +1,5 @@
 /*
- * Wedding Studio — خادم خفيف بلغة Node.js
+ * Occasion Studio — خادم خفيف بلغة Node.js
  *
  * التخزين (طبقة جد db.js):
  *   - PostgreSQL عبر متغير البيئة DATABASE_URL (موصى به على Render).
@@ -95,23 +95,57 @@ function tgSend(text) {
     }
 }
 
-// صياغة رسالة "دعوة جديدة" لصاحب المنصة
+// هروب بسيط لنص HTML (تيليجرام parse_mode=HTML)
+function escHtml(v) {
+    return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// صياغة رسالة "دعوة جديدة" لصاحب المنصة — تتضمن كل المعلومات المتاحة
+// ملاحظة أمنية: هذا الرابط (invite.url) يصل فقط إلى هنا (تيليجرام صاحب المنصة)
+// ولا يُعاد إرساله أبداً للزبون في استجابة /api/invite.
 function inviteToTelegram(invite, host) {
     const occ = invite.occasionLabel || invite.occasion || '';
-    const name = invite.occasionName ? ' («' + invite.occasionName + '»)' : '';
-    const phone = invite.phone ? '\n📞 هاتف صاحب الدعوة: ' + invite.phone : '';
-    return [
-        '🆕 <b>دعوة جديدة منشورة!</b>',
+    const name = invite.occasionName ? ' («' + escHtml(invite.occasionName) + '»)' : '';
+    const photos = Array.isArray(invite.photos) ? invite.photos.length : 0;
+    const music = invite.music || {};
+    const musicLine = music.kind === 'custom' && music.custom
+        ? 'ملف مخصّص (سيُرسل أدناه)'
+        : ('فئة: ' + (music.category || 'soft'));
+
+    const lines = [
+        '🆕 <b>دعوة جديدة — بانتظار الدفع!</b>',
         '━━━━━━━━━━━━',
-        '👤 ' + (invite.groom || '-') + ' & ' + (invite.bride || '-'),
-        '🎉 المناسبة: ' + occ + name,
-        '📅 ' + (invite.date || '-') + '  ' + (invite.time || ''),
-        '📍 ' + (invite.venue || '-') + (invite.address ? ' — ' + invite.address : ''),phone,
-        '🖼 الصور: ' + (Array.isArray(invite.photos) ? invite.photos.length : 0),
-        '🌐 ' + invite.url + '   (المنشأ: ' + (host || '-') + ')',
+        '👤 ' + escHtml(invite.groom || '-') + ' & ' + escHtml(invite.bride || '-'),
+        '🎉 المناسبة: ' + escHtml(occ) + name,
+        '📅 ' + escHtml(invite.date || '-') + '  ' + escHtml(invite.time || ''),
+        '⏳ آخر موعد للرد: ' + escHtml(invite.rsvpDeadline || '-'),
+        '📍 ' + escHtml(invite.venue || '-') + (invite.address ? ' — ' + escHtml(invite.address) : ''),
+        '🗺 الخريطة: ' + escHtml(invite.mapQuery || '-'),
+        '📞 هاتف الزبون: ' + escHtml(invite.phone || '-'),
+        invite.whatsapp ? '💬 واتساب: ' + escHtml(invite.whatsapp) : null,
+        '🎨 الطابع: ' + escHtml(invite.tpl || '-'),
+        '🖋 توقيع: ' + escHtml(invite.calligraphy || '-'),
+        '🎵 الموسيقى: ' + musicLine,
+        '🖼 عدد الصور: ' + photos + (photos ? ' (سترسل تباعاً أدناه)' : '')
+    ].filter(Boolean);
+
+    if (Array.isArray(invite.story) && invite.story.some((s) => s && (s.title || s.text))) {
+        lines.push('──────────────────────', '📖 <b>القصة</b>');
+        invite.story.forEach((s, i) => { if (s && (s.title || s.text)) lines.push('  ' + (i + 1) + '. ' + escHtml(s.title || '') + (s.text ? ' — ' + escHtml(s.text) : '')); });
+    }
+    if (Array.isArray(invite.program) && invite.program.some((p) => p && (p.title || p.time))) {
+        lines.push('──────────────────────', '📋 <b>برنامج الحفل</b>');
+        invite.program.forEach((p, i) => { if (p && (p.title || p.time)) lines.push('  ' + (i + 1) + '. ' + escHtml(p.time || '') + ' — ' + escHtml(p.title || '') + (p.text ? ' (' + escHtml(p.text) + ')' : '')); });
+    }
+
+    lines.push(
+        '──────────────────────',
+        '🔒 الرابط الخاص (لا يظهر للزبون إلا بعد الدفع):',
+        invite.url + '   (المنشأ: ' + (host || '-') + ')',
         '──────────────────────',
         '👥 ردود الضيوف ستصل هنا فور تأكيدهم.'
-    ].join('\n');
+    );
+    return lines.join('\n');
 }
 
 // صياغة رسالة "تأكيد حضور" لصاحب المنصة
@@ -125,6 +159,62 @@ function rsvpToTelegram(invite, entry, count) {
         '🔗 ' + invite.url,
         '📊 إجمالي الردود المسجلة: ' + count
     ].join('\n');
+}
+
+// إرسال ملف (صورة/صوت) إلى تيليجرام عبر multipart/form-data يدوياً (بدون أي مكتبات خارجية)
+function tgSendFile(method, fieldName, buffer, filename, mime, caption) {
+    if (!TG.token || !TG.chatId) return;
+    try {
+        const boundary = '----tgb' + crypto.randomBytes(10).toString('hex');
+        const pre =
+            '--' + boundary + '\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n' + TG.chatId + '\r\n' +
+            (caption ? '--' + boundary + '\r\nContent-Disposition: form-data; name="caption"\r\n\r\n' + caption + '\r\n' : '') +
+            '--' + boundary + '\r\nContent-Disposition: form-data; name="' + fieldName + '"; filename="' + filename + '"\r\nContent-Type: ' + mime + '\r\n\r\n';
+        const post = '\r\n--' + boundary + '--\r\n';
+        const bodyBuf = Buffer.concat([Buffer.from(pre, 'utf8'), buffer, Buffer.from(post, 'utf8')]);
+        const req = https.request({
+            hostname: 'api.telegram.org',
+            path: '/bot' + TG.token + '/' + method,
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data; boundary=' + boundary, 'Content-Length': bodyBuf.length }
+        }, (res) => res.resume());
+        req.on('error', (err) => console.warn('⚠️ فشل رفع ملف تيليجرام:', err.message));
+        req.setTimeout(20000, () => req.destroy());
+        req.end(bodyBuf);
+    } catch (e) {
+        console.warn('⚠️ خطأ رفع ملف تيليجرام:', e.message);
+    }
+}
+
+// يفكّ data URL (data:image/..;base64,...) إلى Buffer + امتداد + نوع MIME
+function decodeDataUrl(src) {
+    const m = String(src || '').match(/^data:([\w/+.-]+);base64,(.*)$/);
+    if (!m) return null;
+    return { mime: m[1], buffer: Buffer.from(m[2], 'base64') };
+}
+
+// إرسال كل صور الدعوة (حتى الحد المسموح لتيليجرام) إلى صاحب المنصة
+function sendInvitePhotosToTelegram(rawPhotos, invite) {
+    if (!TG.token || !TG.chatId) return;
+    const photos = (Array.isArray(rawPhotos) ? rawPhotos : []).slice(0, 10);
+    photos.forEach((src, i) => {
+        const decoded = decodeDataUrl(src);
+        if (!decoded) return; // صور محفوظة كروابط جاهزة (وضع PostgreSQL) تتخطى الرفع اليدوي هنا
+        const ext = decoded.mime.split('/')[1] || 'jpg';
+        const caption = i === 0 ? ('🖼 صور: ' + (invite.groom || '') + ' & ' + (invite.bride || '')) : '';
+        tgSendFile('sendPhoto', 'photo', decoded.buffer, 'photo-' + (i + 1) + '.' + ext, decoded.mime, caption);
+    });
+}
+
+// إرسال الموسيقى المخصّصة (إن وُجدت) كملف صوتي
+function sendInviteMusicToTelegram(invite) {
+    if (!TG.token || !TG.chatId) return;
+    const music = invite.music || {};
+    if (music.kind !== 'custom' || !music.custom) return;
+    const decoded = decodeDataUrl(music.custom);
+    if (!decoded) return;
+    const ext = decoded.mime.split('/')[1] || 'mp3';
+    tgSendFile('sendAudio', 'audio', decoded.buffer, 'music.' + ext, decoded.mime, '🎵 موسيقى مخصّصة — ' + (invite.groom || '') + ' & ' + (invite.bride || ''));
 }
 
 const MIME = {
@@ -222,13 +312,21 @@ const server = http.createServer(async (req, res) => {
             const id = randomId();
             invite.id = id;
             invite.createdAt = new Date().toISOString();
+            invite.paid = false; // بانتظار تأكيد الدفع يدوياً من صاحب المنصة
+            const rawPhotos = Array.isArray(invite.photos) ? invite.photos.slice() : []; // نسخة أصلية (data URLs) لإرسالها كاملة إلى تيليجرام بغض النظر عن وضع التخزين
             invite.photos = storePhotos(invite.photos);
             await db.saveInvite(id, invite);
             const host = req.headers && req.headers.host;
             const abs = 'http://' + (host || 'localhost:' + PORT);
             invite.url = abs + '/v/' + id;
+
+            // كل المعلومات + الصور + الموسيقى تُرسل فقط إلى تيليجرام صاحب المنصة.
+            // عمداً: لا يُعاد الرابط أبداً في استجابة الـ API — الزبون لا يستطيع رؤيته.
             tgSend(inviteToTelegram(invite, host));
-            return send(res, 200, { id, url: '/v/' + id, fullUrl: abs + '/v/' + id });
+            sendInvitePhotosToTelegram(rawPhotos, invite);
+            sendInviteMusicToTelegram(invite);
+
+            return send(res, 200, { ok: true });
         }
 
         // ---- API: جلب دعوة ----
@@ -267,7 +365,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         // ---- فحص صحة ----
-        if (url === '/api/health') return send(res, 200, { ok: true, app: 'Wedding Studio', db: db.mode() });
+        if (url === '/api/health') return send(res, 200, { ok: true, app: 'Occasion Studio', db: db.mode() });
 
         // ---- الملفات الثابتة ----
         let filePath = url === '/' ? '/index.html' : url;
@@ -298,7 +396,7 @@ db.ensureSchema().then(() => {
                 if (n.family === 'IPv4' && !n.internal) addrs.push(n.address);
             }
         }
-        console.log('✅ Wedding Studio يعمل الآن:');
+        console.log('✅ Occasion Studio يعمل الآن:');
         console.log('   التخزين: ' + (db.mode() === 'pg' ? 'PostgreSQL' : 'ملفات JSON محلية'));
         console.log('   محلياً:   http://localhost:' + PORT);
         addrs.forEach((a) => console.log('   على الشبكة: http://' + a + ':' + PORT));

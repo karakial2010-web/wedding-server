@@ -4,9 +4,10 @@ const PANEL_PASS_HASH = '4b7dcde45fac24a6dd67f0fca895984643890d29852b6946b434d07
 const SETTINGS_KEY = 'wedding_site_settings';
 const SESSION_KEY = 'wedding_panel_session';
 
-// ---------- إشعارات تيليجرام (صاحب المنصة) ----------
-const TG_TOKEN = '8824585629:AAH_LvoiuuRFLrAZG_uKEiQNTUZce_k8-aE';
-const TG_CHAT_ID = '6902746761';
+// ---------- عنوان السيرفر الآمن (يستضيف /api/lead) ----------
+// عدّل هذا لعنوان نفس سيرفر Invite Studio (مثال: 'https://your-app.onrender.com')
+// اتركه فارغاً '' إذا كانت هذه الصفحة نفسها مستضافة على نفس ذلك السيرفر.
+const LEAD_API_BASE = '';
 
 function escTg(v) {
     return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -22,96 +23,14 @@ function getBaseUrl() {
     }
 }
 
-function buildTelegramText(s) {
-    const tpl = { luxury: 'الفخم', premium: 'البريميوم', perfect: 'البيرفكت' }[s.template] || s.template || '—';
-    const tplDir = { luxury: 'luxury', premium: 'premium', perfect: 'perfect' }[s.template] || 'luxury';
-    const photos = (Array.isArray(s.photos) ? s.photos : []).filter(Boolean);
-    const lines = [
-        '💍 <b>خاطب / عريس أنشأ موقع زفاف جديد!</b>',
-        '━━━━━━━━━━━━━━',
-        '👤 العريس: ' + escTg(s.groom),
-        '👰 العروس: ' + escTg(s.bride),
-        '🏠 العائلتان: ' + escTg(s.families),
-        '📅 التاريخ: ' + escTg(s.date) + ' (' + escTg(s.day) + ')',
-        '⏰ الموعد: ' + escTg(s.month) + ' — ' + escTg(s.year),
-        '📍 المكان: ' + escTg(s.venueName),
-        '🗺 العنوان: ' + escTg(s.venueAddress),
-        '🎨 القالب: ' + tpl
-    ];
-    if (photos.length) {
-        lines.push('🖼 الصور المضافة: ' + photos.length + ' صورة');
-    } else {
-        lines.push('🖼 الصور: لم يُضف أي صورة بعد');
-    }
-    const prog = (Array.isArray(s.program) ? s.program : []);
-    if (prog.length) {
-        lines.push('📋 البرنامج:');
-        prog.forEach((p, i) => lines.push('   ' + (i + 1) + '. ' + escTg(p.time) + ' — ' + escTg(p.title)));
-    }
-    try {
-        const tplDir = { luxury: 'luxury', premium: 'premium', perfect: 'perfect' }[s.template] || 'luxury';
-        lines.push('🔗 رابط الموقع: ' + (window.self !== window.top ? getBaseUrl() : getBaseUrl() + tplDir + '/index.html'));
-    } catch (e) {}
-    return lines.join('\n');
-}
-
-function getSiteLink(s) {
-    const tplDir = { luxury: 'luxury', premium: 'premium', perfect: 'perfect' }[s.template] || 'luxury';
-    try {
-        return (window.self !== window.top ? getBaseUrl() : getBaseUrl() + tplDir + '/index.html');
-    } catch (e) {
-        return '';
-    }
-}
-
-function sendTgPhoto(s) {
-    const photos = (Array.isArray(s.photos) ? s.photos : []).filter(Boolean);
-    const src = photos[0];
-    if (!src) return;
-    try {
-        const caption = '🖼 أول صورة من ' + (s.groom || '') + ' & ' + (s.bride || '') +
-            ' — ' + (s.date || '') + '\n🔗 ' + getSiteLink(s);
-        if (/^data:image\//.test(src)) {
-            const blobArr = src.split(',');
-            const raw = atob(blobArr[1]);
-            const u8 = new Uint8Array(raw.length);
-            for (let i = 0; i < raw.length; i++) u8[i] = raw.charCodeAt(i);
-            const file = new File([u8], 'cover.jpg', { type: blobArr[0].match(/data:(.*?);/)[1] });
-            const fd = new FormData();
-            fd.append('chat_id', TG_CHAT_ID);
-            fd.append('caption', caption);
-            fd.append('photo', file);
-            fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendPhoto', {
-                method: 'POST',
-                body: fd
-            }).catch(function () {});
-        } else if (/^https?:\/\//.test(src)) {
-            const fd = new FormData();
-            fd.append('chat_id', TG_CHAT_ID);
-            fd.append('caption', caption);
-            fd.append('photo', src);
-            fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendPhoto', {
-                method: 'POST',
-                body: fd
-            }).catch(function () {});
-        }
-    } catch (e) {}
-}
-
+// إرسال بيانات العميل إلى السيرفر (وليس تيليجرام مباشرة) — السيرفر هو من
+// يملك توكن تيليجرام السرّي ويرسل النص والصور من هناك فقط.
 function notifyTelegram(s) {
-    if (!TG_TOKEN || !TG_CHAT_ID) return;
     try {
-        fetch('https://api.telegram.org/bot' + TG_TOKEN + '/sendMessage', {
+        fetch(LEAD_API_BASE + '/api/lead', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                chat_id: TG_CHAT_ID,
-                text: buildTelegramText(s),
-                parse_mode: 'HTML',
-                disable_web_page_preview: true
-            })
-        }).then(function (r) { return r.json(); }).then(function (j) {
-            if (j && j.ok) sendTgPhoto(s);
+            body: JSON.stringify(s)
         }).catch(function () {});
     } catch (e) {}
 }
@@ -152,7 +71,7 @@ function toast(msg) {
 
 function loadSettings() {
     try {
-        const raw = localStorage.getItem(SETTINGS_KEY);
+        const raw = sessionStorage.getItem(SETTINGS_KEY);
         if (!raw) return JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
         const parsed = JSON.parse(raw);
         return Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)), parsed);
@@ -162,7 +81,9 @@ function loadSettings() {
 }
 
 function saveSettings(s) {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+    // عمداً sessionStorage لا localStorage: البيانات تُمسح تلقائياً بمجرد إغلاق
+    // التبويب، فلا يلاقي الزائر أي بيانات قديمة لما يرجع يفتح الموقع من جديد.
+    try { sessionStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (e) {}
 }
 
 function initials(a, b) {
@@ -364,7 +285,7 @@ $('saveBtn').addEventListener('click', () => {
 
 $('resetBtn').addEventListener('click', () => {
     if (!confirm('إعادة ضبط كل الإعدادات على الافتراضي؟')) return;
-    localStorage.removeItem(SETTINGS_KEY);
+    sessionStorage.removeItem(SETTINGS_KEY);
     loadForm();
     toast('تمت إعادة التعيين');
 });
